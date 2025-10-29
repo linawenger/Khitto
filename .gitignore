@@ -30,6 +30,7 @@ packages/
 target/
 xcuserdata
 .env
+.env.sample
 bazel-*
 build-cmake
 node_modules/
