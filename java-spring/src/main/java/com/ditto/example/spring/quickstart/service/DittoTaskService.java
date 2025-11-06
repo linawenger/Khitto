@@ -14,10 +14,6 @@ import java.util.UUID;
 @Component
 public class DittoTaskService {
     private static final String TASKS_COLLECTION_NAME = "tasks";
-    private static final String GAME_COLLECTION_NAME = "game";
-    private static final String PLAYER_COLLECTION_NAME = "player";
-    private static final String QUESTION_COLLECTION_NAME = "question";
-    private static final String ANSWER_COLLECTION_NAME = "answer";
 
     private final DittoService dittoService;
 
@@ -42,70 +38,6 @@ public class DittoTaskService {
                                                     )
                                                     .build()
             ).toCompletableFuture().join();
-
-            dittoService.getDitto().getStore().execute(
-                    "INSERT INTO %s DOCUMENTS (:newTask)".formatted(GAME_COLLECTION_NAME),
-                    DittoCborSerializable.Dictionary.buildDictionary()
-                                                    .put(
-                                                            "newTask",
-                                                            DittoCborSerializable.Dictionary.buildDictionary()
-                                                                                            .put("_id", UUID.randomUUID().toString())
-                                                                                            .put("title", title)
-                                                                                            .put("done", false)
-                                                                                            .put("deleted", false)
-                                                                                            .put("test", false)
-                                                                                            .build()
-                                                    )
-                                                    .build()
-            ).toCompletableFuture().join();
-
-            dittoService.getDitto().getStore().execute(
-                    "INSERT INTO %s DOCUMENTS (:newTask)".formatted(PLAYER_COLLECTION_NAME),
-                    DittoCborSerializable.Dictionary.buildDictionary()
-                                                    .put(
-                                                            "newTask",
-                                                            DittoCborSerializable.Dictionary.buildDictionary()
-                                                                                            .put("_id", UUID.randomUUID().toString())
-                                                                                            .put("title", title)
-                                                                                            .put("done", false)
-                                                                                            .put("deleted", false)
-                                                                                            .put("test", false)
-                                                                                            .build()
-                                                    )
-                                                    .build()
-            ).toCompletableFuture().join();
-
-            dittoService.getDitto().getStore().execute(
-                    "INSERT INTO %s DOCUMENTS (:newTask)".formatted(QUESTION_COLLECTION_NAME),
-                    DittoCborSerializable.Dictionary.buildDictionary()
-                                                    .put(
-                                                            "newTask",
-                                                            DittoCborSerializable.Dictionary.buildDictionary()
-                                                                                            .put("_id", UUID.randomUUID().toString())
-                                                                                            .put("title", title)
-                                                                                            .put("done", false)
-                                                                                            .put("deleted", false)
-                                                                                            .put("test", false)
-                                                                                            .build()
-                                                    )
-                                                    .build()
-            ).toCompletableFuture().join();
-
-            dittoService.getDitto().getStore().execute(
-                    "INSERT INTO %s DOCUMENTS (:newTask)".formatted(ANSWER_COLLECTION_NAME),
-                    DittoCborSerializable.Dictionary.buildDictionary()
-                                                    .put(
-                                                            "newTask",
-                                                            DittoCborSerializable.Dictionary.buildDictionary()
-                                                                                            .put("_id", UUID.randomUUID().toString())
-                                                                                            .put("title", title)
-                                                                                            .put("done", false)
-                                                                                            .put("deleted", false)
-                                                                                            .put("test", false)
-                                                                                            .build()
-                                                    )
-                                                    .build()
-            ).toCompletableFuture().join();
         } catch (Error e) {
             throw new RuntimeException(e);
         }
@@ -113,10 +45,6 @@ public class DittoTaskService {
 
     public void toggleTaskDone(@Nonnull String taskId) {
         toggleBooleanField(taskId, "done");
-    }
-
-    public void toggleTaskTest(@Nonnull String taskId) {
-        toggleBooleanField(taskId, "test");
     }
 
     private void toggleBooleanField(@Nonnull String taskId, @Nonnull String fieldName) {
