@@ -1,8 +1,17 @@
-<div th:fragment="editFormFrag">
-    <form th:attr="hx-put=@{/tasks/{id}(id=${id})}"
-          hx-swap="none"
-          hx-on::after-request="if(event.detail.successful) { this.closest('div').innerHTML = '' }">
-        <input type="text" name="title" required/>
-        <button type="submit">Save</button>
-    </form>
+<div th:fragment="editFormFrag" class="appear">
+  <form class="card" style="padding:12px; border-radius:16px; background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03)); border:1px solid rgba(255,255,255,0.08);"
+        th:attr="hx-put=@{/tasks/{id}(id=${id})}"
+        hx-swap="none"
+        hx-on::after-request="if(event.detail.successful) { this.closest('div').innerHTML = '' }">
+    <div class="card-body" style="padding:0;">
+      <div class="field">
+        <label for="edit_title" class="subtle">Titel</label>
+        <input id="edit_title" class="input" type="text" name="title" required/>
+      </div>
+      <div class="row mt-8">
+        <div class="spacer"></div>
+        <button class="btn" type="submit">Speichern</button>
+      </div>
+    </div>
+  </form>
 </div>
