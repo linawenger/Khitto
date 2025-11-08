@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Starten?</title>
+  <link rel="stylesheet" th:href="@{/style.css}" />
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-left">
+    <a th:href="@{/}" class="btn-ghost">←</a>
+  </div>
+  <div class="nav-center">Starten?</div>
+  <div></div>
+</nav>
+<div class="page center-screen">
+  <form th:action="@{/games/{id}/start(id=${game.id})}" method="post">
+    <button class="btn big-start-btn" type="submit">Starten!</button>
+  </form>
+</div>
+</body>
+</html>

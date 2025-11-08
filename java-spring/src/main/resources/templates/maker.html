@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Khitto Maker</title>
+  <link rel="stylesheet" th:href="@{/style.css}" />
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-left">
+    <form th:action="@{/maker/{id}/cancel(id=${game.id})}" method="post">
+      <button class="btn-ghost" type="submit">← Zurück</button>
+    </form>
+  </div>
+  <div class="nav-center">Khitto Maker</div>
+  <div class="nav-right">
+    <button class="btn" onclick="document.getElementById('makerForm').submit()">Publish</button>
+  </div>
+</nav>
+<div class="page">
+  <form id="makerForm" th:action="@{/maker/{id}/publish(id=${game.id})}" method="post">
+    <div class="big-box">
+      <label>Name des Spiels</label>
+      <input class="input" name="name" th:value="${game.name}" />
+    </div>
+
+    <div id="questions"></div>
+
+    <div class="big-box" style="text-align:center;">
+      <button type="button" class="btn-ghost" onclick="addQuestion()">+ Frage hinzufügen</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  let qCount = 0;
+  function addQuestion() {
+    qCount++;
+    const wrap = document.getElementById('questions');
+    const div = document.createElement('div');
+    div.className = 'question-block';
+    div.innerHTML = `
+    <label>Frage ${qCount}</label>
+    <input class="input" name="q[]" placeholder="Fragetext" />
+
+    <div style="margin-top:8px;">Antworten (eine ist richtig):</div>
+    <div style="display:grid;gap:6px;margin-top:6px;">
+      <div>
+        <input class="input" name="a1[]" placeholder="Antwort 1" />
+        <label><input type="radio" name="correct${qCount}" value="1" checked /> richtig</label>
+      </div>
+      <div>
+        <input class="input" name="a2[]" placeholder="Antwort 2" />
+        <label><input type="radio" name="correct${qCount}" value="2" /> richtig</label>
+      </div>
+      <div>
+        <input class="input" name="a3[]" placeholder="Antwort 3" />
+        <label><input type="radio" name="correct${qCount}" value="3" /> richtig</label>
+      </div>
+      <div>
+        <input class="input" name="a4[]" placeholder="Antwort 4" />
+        <label><input type="radio" name="correct${qCount}" value="4" /> richtig</label>
+      </div>
+    </div>
+    <input type="hidden" name="correct[]" id="hiddenCorrect${qCount}" value="1" />
+  `;
+    wrap.appendChild(div);
+
+    const radios = div.querySelectorAll(`input[type=radio][name=correct${qCount}]`);
+    radios.forEach(r => {
+      r.addEventListener('change', () => {
+        document.getElementById('hiddenCorrect'+qCount).value = r.value;
+      });
+    });
+  }
+</script>
+</body>
+</html>

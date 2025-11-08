@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<nav class="nav">
+  <div class="nav-left">
+    <a th:href="@{/}" class="btn-ghost">←</a>
+  </div>
+  <div class="nav-center">
+    <span th:text="${title}">Khitto</span>
+  </div>
+  <div class="nav-right">
+    <span th:if="${rightButton != null}" th:utext="${rightButton}"></span>
+  </div>
+</nav>
+</body>
+</html>

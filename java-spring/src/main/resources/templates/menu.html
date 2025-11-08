@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Khitto Menu</title>
+  <link rel="stylesheet" th:href="@{/style.css}" />
+</head>
+<body>
+<nav class="nav">
+  <div></div>
+  <div class="nav-center">Khitto Menu</div>
+  <div></div>
+</nav>
+<div class="page">
+  <div class="grid-games">
+    <a th:each="g : ${games}" th:href="@{/games/{id}(id=${g.id})}" class="game-card">
+      <span th:text="${g.name}">Game</span>
+    </a>
+
+    <form th:action="@{/games/new}" method="post" class="game-card" style="gap:4px;">
+      <button type="submit" style="all:unset;cursor:pointer;">
+        <div style="font-size:2.4rem;">+</div>
+        <div>Neues Spiel</div>
+      </button>
+    </form>
+  </div>
+</div>
+</body>
+</html>
