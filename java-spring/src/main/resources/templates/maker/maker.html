@@ -7,10 +7,10 @@
 </head>
 <body>
 
-<div th:replace="fragments/navigation-bar :: navigation-bar(
+<div th:replace="~{fragments/navigation-bar :: navigation-bar(
         ~{fragments/navigation-bar-elements :: maker-cancel},
         'Khitto Maker',
-        ~{fragments/navigation-bar-elements :: maker-publish})">
+        ~{fragments/navigation-bar-elements :: maker-publish})}">
 </div>
 
 
@@ -29,7 +29,8 @@
   </form>
 </div>
 
-<div th:replace="maker/questionLayout :: questionTemplateFragment"></div>
+<div th:replace="~{maker/questionLayout :: questionTemplateFragment}">
+</div>
 
 </body>
 </html>

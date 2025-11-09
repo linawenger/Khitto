@@ -6,10 +6,10 @@
 </head>
 <body>
 
-<div th:replace="fragments/navigation-bar :: navigation-bar(
+<div th:replace="~{fragments/navigation-bar :: navigation-bar(
         ~{fragments/navigation-bar-elements :: back-to-menu},
         'Result',
-        ~{fragments/navigation-bar-elements :: game-next})">
+        ~{fragments/navigation-bar-elements :: game-next})}">
 </div>
 
 <div class="page center-screen">
