@@ -10,18 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-public class MakerController {
-
-    private final GameCsvRepository gameRepo;
-    private final QuestionCsvRepository questionRepo;
-    private final AnswerCsvRepository answerRepo;
+public class MakerController extends BaseGameController {
 
     public MakerController(GameCsvRepository gameRepo,
                            QuestionCsvRepository questionRepo,
                            AnswerCsvRepository answerRepo) {
-        this.gameRepo = gameRepo;
-        this.questionRepo = questionRepo;
-        this.answerRepo = answerRepo;
+        super(gameRepo, questionRepo, answerRepo);
     }
 
     @GetMapping("/maker/{id}")
@@ -70,7 +64,6 @@ public class MakerController {
 
             Question q = new Question(qId, id, qtext, correctAnswerId);
             newQuestions.add(q);
-
             qId += 2;
         }
 

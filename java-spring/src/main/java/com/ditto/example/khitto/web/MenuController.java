@@ -7,12 +7,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
 @Controller
-public class MenuController {
+public class MenuController extends BaseGameController {
 
-    private final GameCsvRepository gameRepo;
-
-    public MenuController(GameCsvRepository gameRepo) {
-        this.gameRepo = gameRepo;
+    public MenuController(GameCsvRepository gameRepo,
+                          QuestionCsvRepository questionRepo,
+                          AnswerCsvRepository answerRepo) {
+        super(gameRepo, questionRepo, answerRepo);
     }
 
     @GetMapping("/")

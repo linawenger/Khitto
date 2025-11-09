@@ -5,23 +5,18 @@ import com.ditto.example.khitto.repo.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Comparator;
 import java.util.List;
 
 @Controller
-public class GamePlayController {
-
-    private final GameCsvRepository gameRepo;
-    private final QuestionCsvRepository questionRepo;
-    private final AnswerCsvRepository answerRepo;
+public class GamePlayController extends BaseGameController {
 
     public GamePlayController(GameCsvRepository gameRepo,
                               QuestionCsvRepository questionRepo,
                               AnswerCsvRepository answerRepo) {
-        this.gameRepo = gameRepo;
-        this.questionRepo = questionRepo;
-        this.answerRepo = answerRepo;
+        super(gameRepo, questionRepo, answerRepo);
     }
 
     @GetMapping("/games/{id}")
@@ -69,7 +64,7 @@ public class GamePlayController {
     @PostMapping("/games/{id}/start")
     public String startGame(@PathVariable int id) {
         Game game = gameRepo.findById(id).orElseThrow();
-        game.setStatus(1); // erste Frage
+        game.setStatus(1);
         gameRepo.save(game);
         return "redirect:/games/" + id;
     }
