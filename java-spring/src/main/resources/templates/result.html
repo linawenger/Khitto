@@ -1,25 +1,22 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Auswertung</title>
+  <title>Result</title>
   <link rel="stylesheet" th:href="@{/style.css}" />
 </head>
 <body>
-<nav class="nav">
-  <div class="nav-left">
-    <a th:href="@{/}" class="btn-ghost">←</a>
-  </div>
-  <div class="nav-center">Auswertung</div>
-  <div class="nav-right">
-    <form th:action="@{/games/{id}/next(id=${game.id})}" method="post">
-      <button class="btn" type="submit">Weiter</button>
-    </form>
-  </div>
-</nav>
+
+<div th:replace="fragments/navigation-bar :: navigation-bar(
+        ~{fragments/navigation-bar-elements :: back-to-menu},
+        'Result',
+        ~{fragments/navigation-bar-elements :: game-next})">
+</div>
+
 <div class="page center-screen">
-  <div class="big-box">
-    hier resultate lol
+  <div class="box">
+    <p>Result screen placeholder.</p>
   </div>
 </div>
+
 </body>
 </html>

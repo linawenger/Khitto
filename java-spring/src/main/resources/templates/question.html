@@ -1,50 +1,29 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Frage</title>
+  <title>Question</title>
   <link rel="stylesheet" th:href="@{/style.css}" />
+  <script defer th:src="@{/question.js}"></script>
 </head>
 <body>
-<nav class="nav">
-  <div class="nav-left">
-    <a th:href="@{/}" class="btn-ghost">←</a>
-  </div>
-  <div class="nav-center">Frage</div>
-  <div class="nav-right">
-    <form id="nextForm" th:action="@{/games/{id}/next(id=${game.id})}" method="post">
-      <button class="btn" type="submit">Weiter</button>
-    </form>
-  </div>
-</nav>
+
+<div th:replace="fragments/navigation-bar :: navigation-bar(
+        ~{fragments/navigation-bar-elements :: back-to-menu},
+        'Question',
+        ~{fragments/navigation-bar-elements :: game-next})">
+</div>
+
 <div class="page">
-  <h2 th:text="${question.content}">Frage ...</h2>
+  <h2 th:text="${question.content}">Question text…</h2>
+
   <div id="answers">
-    <div th:each="a : ${answers}"
+    <div th:each="answer : ${answers}"
          class="answer-box"
-         th:attr="data-id=${a.id},data-correct=${a.id}==${question.correctAnswerId}?true:false"
-         onclick="selectAnswer(this)">
-      <span th:text="${a.content}">Antwort</span>
+         th:attr="data-id=${answer.id}, data-correct=${answer.id}==${question.correctAnswerId}?true:false">
+      <span th:text="${answer.content}">Answer</span>
     </div>
   </div>
 </div>
-<script>
-  let answered = false;
-  function selectAnswer(el) {
-    if (answered) return;
-    answered = true;
-    const correct = el.dataset.correct === 'true';
-    if (correct) {
-      el.classList.add('correct');
-    } else {
-      el.classList.add('wrong');
-      // richtige highlighten
-      document.querySelectorAll('#answers .answer-box').forEach(box => {
-        if (box.dataset.correct === 'true') {
-          box.classList.add('correct');
-        }
-      });
-    }
-  }
-</script>
+
 </body>
 </html>

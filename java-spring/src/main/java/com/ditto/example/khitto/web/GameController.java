@@ -44,7 +44,7 @@ public class GameController {
     public String maker(@PathVariable int id, Model model) {
         Game game = gameRepo.findById(id).orElseThrow();
         model.addAttribute("game", game);
-        return "maker";
+        return "maker/maker";
     }
 
     // Maker publish
