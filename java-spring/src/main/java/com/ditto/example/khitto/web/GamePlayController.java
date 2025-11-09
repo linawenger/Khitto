@@ -24,7 +24,6 @@ public class GamePlayController {
         this.answerRepo = answerRepo;
     }
 
-    // Spiel klicken im Menü
     @GetMapping("/games/{id}")
     public String play(@PathVariable int id) {
         Game game = gameRepo.findById(id).orElseThrow();
@@ -39,7 +38,6 @@ public class GamePlayController {
             return "redirect:/games/" + id + "/start";
         }
 
-        // alle Fragen zu diesem Spiel
         List<Question> questions = questionRepo.findByGameId(id)
                                                .stream()
                                                .sorted(Comparator.comparingInt(Question::getId))

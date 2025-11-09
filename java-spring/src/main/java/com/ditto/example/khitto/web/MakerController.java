@@ -24,7 +24,6 @@ public class MakerController {
         this.answerRepo = answerRepo;
     }
 
-    // Maker anzeigen
     @GetMapping("/maker/{id}")
     public String maker(@PathVariable int id, Model model) {
         Game game = gameRepo.findById(id).orElseThrow();
@@ -32,7 +31,6 @@ public class MakerController {
         return "maker/maker";
     }
 
-    // Maker publish
     @PostMapping("/maker/{id}/publish")
     public String publish(@PathVariable int id,
                           @RequestParam String name,
@@ -56,11 +54,9 @@ public class MakerController {
             String qtext = questions.get(i);
             if (qtext == null || qtext.isBlank()) continue;
 
-            // Answers anlegen
             int baseAnswerId = answerRepo.getNextId();
-            int correctIndex = correct.get(i); // 1-4
+            int correctIndex = correct.get(i);
 
-            // 4 answers
             List<String> answerTexts = List.of(a1.get(i), a2.get(i), a3.get(i), a4.get(i));
             int correctAnswerId = -1;
             for (int j = 0; j < 4; j++) {
@@ -75,7 +71,7 @@ public class MakerController {
             Question q = new Question(qId, id, qtext, correctAnswerId);
             newQuestions.add(q);
 
-            qId += 2; // nächste ungerade
+            qId += 2;
         }
 
         if (!newQuestions.isEmpty()) {
@@ -88,7 +84,6 @@ public class MakerController {
         return "redirect:/";
     }
 
-    // Maker -> back: wenn game noch nicht verändert / noch nicht finished -> löschen
     @PostMapping("/maker/{id}/cancel")
     public String cancel(@PathVariable int id) {
         Game game = gameRepo.findById(id).orElseThrow();
