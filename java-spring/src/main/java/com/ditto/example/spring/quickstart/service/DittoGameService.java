@@ -20,7 +20,7 @@ public class DittoGameService {
         this.dittoService = dittoService;
     }
 
-    // --- CREATE ---
+
     public void addGame(@Nonnull String status) {
         dittoService.getDitto().getStore().execute(
                 "INSERT INTO %s DOCUMENTS (:newGame)".formatted(GAMES_COLLECTION_NAME),
@@ -34,7 +34,7 @@ public class DittoGameService {
         ).toCompletableFuture().join();
     }
 
-    // --- UPDATE ---
+
     public void updateGameStatus(@Nonnull String gameId, @Nonnull String newStatus) {
         dittoService.getDitto().getStore().execute(
                 "UPDATE %s SET status = :newStatus WHERE _id = :gameId".formatted(GAMES_COLLECTION_NAME),
@@ -45,7 +45,6 @@ public class DittoGameService {
         ).toCompletableFuture().join();
     }
 
-    // --- DELETE (optional, if you want it) ---
     public void deleteGame(@Nonnull String gameId) {
         dittoService.getDitto().getStore().execute(
                 "DELETE FROM %s WHERE _id = :gameId".formatted(GAMES_COLLECTION_NAME),
@@ -55,7 +54,6 @@ public class DittoGameService {
         ).toCompletableFuture().join();
     }
 
-    // --- READ / OBSERVE ---
     @Nonnull
     public Flux<List<Game>> observeAll() {
         final String query = "SELECT * FROM %s ORDER BY status ASC".formatted(GAMES_COLLECTION_NAME);
