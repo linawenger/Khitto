@@ -1,4 +1,4 @@
-package com.ditto.example.spring.quickstart.service;
+package quickstart.service;
 
 import com.ditto.java.*;
 import com.ditto.java.serialization.DittoCborSerializable;

@@ -1,6 +1,6 @@
-package com.ditto.example.spring.quickstart.service;
+package quickstart.service;
 
-import com.ditto.example.spring.quickstart.configuration.DittoConfigurationKeys;
+import quickstart.configuration.DittoConfigurationKeys;
 import com.ditto.example.spring.quickstart.configuration.DittoSecretsConfiguration;
 import com.ditto.java.*;
 import com.ditto.java.serialization.DittoCborSerializable;

@@ -1,7 +1,7 @@
-package com.ditto.example.spring.quickstart.controller;
+package quickstart.controller;
 
-import com.ditto.example.spring.quickstart.service.DittoTaskService;
-import com.ditto.example.spring.quickstart.service.Task;
+import quickstart.service.DittoTaskService;
+import quickstart.service.Task;
 import jakarta.annotation.Nonnull;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;

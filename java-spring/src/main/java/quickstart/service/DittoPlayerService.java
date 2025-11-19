@@ -1,4 +1,4 @@
-package com.ditto.example.spring.quickstart.service;
+package quickstart.service;
 
 import com.ditto.java.*;
 import com.ditto.java.serialization.DittoCborSerializable;
@@ -12,57 +12,57 @@ import java.util.List;
 import java.util.UUID;
 
 @Component
-public class DittoQuestionService {
+public class DittoPlayerService {
 
-    private static final String QUESTIONS_COLLECTION_NAME = "questions";
+    private static final String PLAYERS_COLLECTION_NAME = "players";
     private final DittoService dittoService;
 
-    public DittoQuestionService(DittoService dittoService) {
+    public DittoPlayerService(DittoService dittoService) {
         this.dittoService = dittoService;
     }
 
-    public void addQuestion(@Nonnull String content) {
+    public void addPlayer(@Nonnull String ip) {
         dittoService.getDitto().getStore().execute(
-                "INSERT INTO %s DOCUMENTS (:newQuestion)".formatted(QUESTIONS_COLLECTION_NAME),
+                "INSERT INTO %s DOCUMENTS (:newPlayer)".formatted(PLAYERS_COLLECTION_NAME),
                 DittoCborSerializable.Dictionary.buildDictionary()
-                                                .put("newQuestion",
+                                                .put("newPlayer",
                                                         DittoCborSerializable.Dictionary.buildDictionary()
                                                                                         .put("_id", UUID.randomUUID().toString())
-                                                                                        .put("content", content)
+                                                                                        .put("ip", ip)
                                                                                         .build())
                                                 .build()
         ).toCompletableFuture().join();
     }
 
-    public void updateQuestion(@Nonnull String qid, @Nonnull String newContent) {
+    public void updatePlayerIp(@Nonnull String pid, @Nonnull String newIp) {
         dittoService.getDitto().getStore().execute(
-                "UPDATE %s SET content = :newContent WHERE _id = :qid".formatted(QUESTIONS_COLLECTION_NAME),
+                "UPDATE %s SET ip = :newIp WHERE _id = :pid".formatted(PLAYERS_COLLECTION_NAME),
                 DittoCborSerializable.Dictionary.buildDictionary()
-                                                .put("newContent", newContent)
-                                                .put("qid", qid)
+                                                .put("newIp", newIp)
+                                                .put("pid", pid)
                                                 .build()
         ).toCompletableFuture().join();
     }
 
-    public void deleteQuestion(@Nonnull String qid) {
+    public void deletePlayer(@Nonnull String pid) {
         dittoService.getDitto().getStore().execute(
-                "DELETE FROM %s WHERE _id = :qid".formatted(QUESTIONS_COLLECTION_NAME),
+                "DELETE FROM %s WHERE _id = :pid".formatted(PLAYERS_COLLECTION_NAME),
                 DittoCborSerializable.Dictionary.buildDictionary()
-                                                .put("qid", qid)
+                                                .put("pid", pid)
                                                 .build()
         ).toCompletableFuture().join();
     }
 
     @Nonnull
-    public Flux<List<Question>> observeAll() {
-        final String query = "SELECT * FROM %s ORDER BY content ASC".formatted(QUESTIONS_COLLECTION_NAME);
+    public Flux<List<Player>> observeAll() {
+        final String query = "SELECT * FROM %s ORDER BY ip ASC".formatted(PLAYERS_COLLECTION_NAME);
 
         return Flux.create(emitter -> {
             Ditto ditto = dittoService.getDitto();
             try {
                 DittoSyncSubscription subscription = ditto.getSync().registerSubscription(query);
                 DittoStoreObserver observer = ditto.getStore().registerObserver(query, results ->
-                        emitter.next(results.getItems().stream().map(this::itemToQuestion).toList())
+                        emitter.next(results.getItems().stream().map(this::itemToPlayer).toList())
                 );
 
                 emitter.onDispose(() -> {
@@ -79,11 +79,11 @@ public class DittoQuestionService {
         }, FluxSink.OverflowStrategy.LATEST);
     }
 
-    private Question itemToQuestion(@Nonnull DittoQueryResultItem item) {
+    private Player itemToPlayer(@Nonnull DittoQueryResultItem item) {
         var value = item.getValue();
-        return new Question(
+        return new Player(
                 value.get("_id").getString(),
-                value.get("content").getString()
+                value.get("ip").getString()
         );
     }
 }

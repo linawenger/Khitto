@@ -1,6 +1,6 @@
-package com.ditto.example.spring.quickstart.controller;
+package quickstart.controller;
 
-import com.ditto.example.spring.quickstart.service.DittoService;
+import quickstart.service.DittoService;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.GetMapping;

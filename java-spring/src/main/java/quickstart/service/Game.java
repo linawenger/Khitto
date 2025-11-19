@@ -1,4 +1,4 @@
-package com.ditto.example.spring.quickstart.service;
+package quickstart.service;
 
 import jakarta.annotation.Nonnull;
 
