@@ -73,26 +73,40 @@ public class DittoGameService {
     public void save(khitto.model.Game game) {
         Ditto ditto = dittoService.getDitto();
 
-        // Einfachheit: wir inserten immer einen neuen Eintrag für diese id.
-        // (Wenn du echte Updates willst, müsstest du vorher löschen.)
-        DittoQueryResult result = ditto.getStore()
-                                       .execute(
-                                               "INSERT INTO %s DOCUMENTS (:newGame)".formatted(GAMES_COLLECTION_NAME),
-                                               DittoCborSerializable.Dictionary.buildDictionary()
-                                                                               .put("newGame",
-                                                                                       DittoCborSerializable.Dictionary.buildDictionary()
-                                                                                                                       .put("_id", UUID.randomUUID().toString())
-                                                                                                                       .put("id", String.valueOf(game.getId()))
-                                                                                                                       .put("name", game.getName())
-                                                                                                                       .put("status", String.valueOf(game.getStatus()))
-                                                                                                                       .put("finished", String.valueOf(game.isFinished()))
-                                                                                                                       .build())
-                                                                               .build()
-                                       )
-                                       .toCompletableFuture()
-                                       .join();
-        closeQuietly(result);
+        // 1) Alles mit dieser ID löschen (entspricht: Liste ohne dieses Game neu schreiben)
+        DittoQueryResult deleteResult = ditto.getStore()
+                                             .execute(
+                                                     "DELETE FROM %s WHERE id = :id".formatted(GAMES_COLLECTION_NAME),
+                                                     DittoCborSerializable.Dictionary.buildDictionary()
+                                                                                     .put("id", String.valueOf(game.getId()))
+                                                                                     .build()
+                                             )
+                                             .toCompletableFuture()
+                                             .join();
+        closeQuietly(deleteResult);
+
+        // 2) Neues/aktuelles Game als einzigen Datensatz mit dieser ID einfügen
+        DittoCborSerializable.Dictionary gameDoc =
+                DittoCborSerializable.Dictionary.buildDictionary()
+                                                .put("_id", UUID.randomUUID().toString())
+                                                .put("id", String.valueOf(game.getId()))
+                                                .put("name", game.getName())
+                                                .put("status", String.valueOf(game.getStatus()))
+                                                .put("finished", String.valueOf(game.isFinished()))
+                                                .build();
+
+        DittoQueryResult insertResult = ditto.getStore()
+                                             .execute(
+                                                     "INSERT INTO %s DOCUMENTS (:newGame)".formatted(GAMES_COLLECTION_NAME),
+                                                     DittoCborSerializable.Dictionary.buildDictionary()
+                                                                                     .put("newGame", gameDoc)
+                                                                                     .build()
+                                             )
+                                             .toCompletableFuture()
+                                             .join();
+        closeQuietly(insertResult);
     }
+
 
     // entspricht gameRepo.delete(int)
     public void delete(int id) {
