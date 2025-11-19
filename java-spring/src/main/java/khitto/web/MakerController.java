@@ -1,13 +1,7 @@
 package khitto.web;
 
 import khitto.model.*;
-import khitto.repo.*;
-import khitto.model.Answer;
-import khitto.model.Game;
-import khitto.model.Question;
-import khitto.repo.AnswerCsvRepository;
-import khitto.repo.GameCsvRepository;
-import khitto.repo.QuestionCsvRepository;
+import khitto.service.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,9 +12,9 @@ import java.util.List;
 @Controller
 public class MakerController extends BaseGameController {
 
-    public MakerController(GameCsvRepository gameRepo,
-                           QuestionCsvRepository questionRepo,
-                           AnswerCsvRepository answerRepo) {
+    public MakerController(DittoGameService gameRepo,
+                           DittoQuestionService questionRepo,
+                           DittoAnswerService answerRepo) {
         super(gameRepo, questionRepo, answerRepo);
     }
 

@@ -3,9 +3,11 @@ package khitto.service;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.ditto.java.Ditto;
 import com.ditto.java.DittoError;
+import com.ditto.java.DittoQueryResult;
 import com.ditto.java.DittoQueryResultItem;
 import com.ditto.java.DittoStoreObserver;
 import com.ditto.java.DittoSyncSubscription;
@@ -25,51 +27,66 @@ public class DittoAnswerService {
         this.dittoService = dittoService;
     }
 
-    public void addAnswer(@Nonnull String content, @Nonnull String answer) {
-        dittoService.getDitto().getStore().execute(
-                "INSERT INTO %s DOCUMENTS (:newAnswer)".formatted(ANSWERS_COLLECTION_NAME),
-                DittoCborSerializable.Dictionary.buildDictionary()
-                                                .put("newAnswer",
-                                                        DittoCborSerializable.Dictionary.buildDictionary()
-                                                                                        .put("_id", UUID.randomUUID().toString())
-                                                                                        .put("content", content)
-                                                                                        .put("answer", answer)
-                                                                                        .build())
-                                                .build()
-        ).toCompletableFuture().join();
+    /* =========================
+     *  API wie AnswerCsvRepository
+     * ========================= */
+
+    // answerRepo.findByQuestionId(int)
+    public java.util.List<khitto.model.Answer> findByQuestionId(int questionId) {
+        Ditto ditto = dittoService.getDitto();
+        DittoQueryResult result = ditto.getStore()
+                                       .execute(
+                                               "SELECT * FROM %s WHERE questionId = :qid".formatted(ANSWERS_COLLECTION_NAME),
+                                               DittoCborSerializable.Dictionary.buildDictionary()
+                                                                               .put("qid", String.valueOf(questionId))
+                                                                               .build())
+                                       .toCompletableFuture()
+                                       .join();
+
+        try {
+            return result.getItems().stream()
+                         .map(this::itemToModelAnswer)
+                         .collect(Collectors.toList());
+        } finally {
+            closeQuietly(result);
+        }
     }
 
-    public void updateAnswer(@Nonnull String aid, @Nonnull String newAnswer) {
-        dittoService.getDitto().getStore().execute(
-                "UPDATE %s SET answer = :newAnswer WHERE _id = :aid".formatted(ANSWERS_COLLECTION_NAME),
-                DittoCborSerializable.Dictionary.buildDictionary()
-                                                .put("newAnswer", newAnswer)
-                                                .put("aid", aid)
-                                                .build()
-        ).toCompletableFuture().join();
+    // answerRepo.getNextId()
+    public int getNextId() {
+        List<khitto.model.Answer> all = findAllInternal();
+        return all.stream().mapToInt(khitto.model.Answer::getId).max().orElse(0) + 1;
     }
 
-    public void updateContent(@Nonnull String aid, @Nonnull String newContent) {
-        dittoService.getDitto().getStore().execute(
-                "UPDATE %s SET content = :newContent WHERE _id = :aid".formatted(ANSWERS_COLLECTION_NAME),
-                DittoCborSerializable.Dictionary.buildDictionary()
-                                                .put("newContent", newContent)
-                                                .put("aid", aid)
-                                                .build()
-        ).toCompletableFuture().join();
+    // answerRepo.saveAll(List<Answer>)
+    public void saveAll(java.util.List<khitto.model.Answer> answers) {
+        Ditto ditto = dittoService.getDitto();
+
+        for (khitto.model.Answer a : answers) {
+            DittoQueryResult result = ditto.getStore()
+                                           .execute(
+                                                   "INSERT INTO %s DOCUMENTS (:newAnswer)".formatted(ANSWERS_COLLECTION_NAME),
+                                                   DittoCborSerializable.Dictionary.buildDictionary()
+                                                                                   .put("newAnswer",
+                                                                                           DittoCborSerializable.Dictionary.buildDictionary()
+                                                                                                                           .put("_id", UUID.randomUUID().toString())
+                                                                                                                           .put("id", String.valueOf(a.getId()))
+                                                                                                                           .put("questionId", String.valueOf(a.getQuestionId()))
+                                                                                                                           .put("content", a.getContent())
+                                                                                                                           .build())
+                                                                                   .build())
+                                           .toCompletableFuture()
+                                           .join();
+            closeQuietly(result);
+        }
     }
 
-    public void deleteAnswer(@Nonnull String aid) {
-        dittoService.getDitto().getStore().execute(
-                "DELETE FROM %s WHERE _id = :aid".formatted(ANSWERS_COLLECTION_NAME),
-                DittoCborSerializable.Dictionary.buildDictionary()
-                                                .put("aid", aid)
-                                                .build()
-        ).toCompletableFuture().join();
-    }
+    /* =========================
+     *  (Optional) reactive observeAll
+     * ========================= */
 
     @Nonnull
-    public Flux<List<Answer>> observeAll() {
+    public Flux<java.util.List<khitto.model.Answer>> observeAll() {
         final String query = "SELECT * FROM %s ORDER BY content ASC".formatted(ANSWERS_COLLECTION_NAME);
 
         return Flux.create(emitter -> {
@@ -77,7 +94,7 @@ public class DittoAnswerService {
             try {
                 DittoSyncSubscription subscription = ditto.getSync().registerSubscription(query);
                 DittoStoreObserver observer = ditto.getStore().registerObserver(query, results ->
-                        emitter.next(results.getItems().stream().map(this::itemToAnswer).toList())
+                        emitter.next(results.getItems().stream().map(this::itemToModelAnswer).toList())
                 );
 
                 emitter.onDispose(() -> {
@@ -94,12 +111,53 @@ public class DittoAnswerService {
         }, FluxSink.OverflowStrategy.LATEST);
     }
 
-    private Answer itemToAnswer(@Nonnull DittoQueryResultItem item) {
+    /* =========================
+     *  intern
+     * ========================= */
+
+    private java.util.List<khitto.model.Answer> findAllInternal() {
+        Ditto ditto = dittoService.getDitto();
+        DittoQueryResult result = ditto.getStore()
+                                       .execute("SELECT * FROM %s".formatted(ANSWERS_COLLECTION_NAME))
+                                       .toCompletableFuture()
+                                       .join();
+
+        try {
+            return result.getItems().stream()
+                         .map(this::itemToModelAnswer)
+                         .collect(Collectors.toList());
+        } finally {
+            closeQuietly(result);
+        }
+    }
+
+    private khitto.model.Answer itemToModelAnswer(@Nonnull DittoQueryResultItem item) {
         var value = item.getValue();
-        return new Answer(
-                value.get("_id").getString(),
-                value.get("content").getString(),
-                value.get("answer").getString()
-        );
+
+        String idStr  = value.get("id")        != null ? value.get("id").getString()        : "0";
+        String qidStr = value.get("questionId")!= null ? value.get("questionId").getString(): "0";
+        String content= value.get("content")   != null ? value.get("content").getString()   : "";
+
+        int id  = parseIntSafe(idStr, 0);
+        int qid = parseIntSafe(qidStr, 0);
+
+        return new khitto.model.Answer(id, qid, content);
+    }
+
+    private int parseIntSafe(String s, int fallback) {
+        try {
+            return Integer.parseInt(s);
+        } catch (Exception e) {
+        }
+        return fallback;
+    }
+
+    private void closeQuietly(DittoQueryResult result) {
+        if (result == null) return;
+        try {
+            result.close();
+        } catch (IOException e) {
+            // ignore
+        }
     }
 }

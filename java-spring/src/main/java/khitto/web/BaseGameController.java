@@ -1,19 +1,16 @@
 package khitto.web;
 
-import khitto.repo.GameCsvRepository;
-import khitto.repo.QuestionCsvRepository;
-import khitto.repo.AnswerCsvRepository;
-
+import khitto.service.*;
 
 public abstract class BaseGameController {
 
-    protected final GameCsvRepository gameRepo;
-    protected final QuestionCsvRepository questionRepo;
-    protected final AnswerCsvRepository answerRepo;
+    protected final DittoGameService gameRepo;
+    protected final DittoQuestionService questionRepo;
+    protected final DittoAnswerService answerRepo;
 
-    protected BaseGameController(GameCsvRepository gameRepo,
-                                 QuestionCsvRepository questionRepo,
-                                 AnswerCsvRepository answerRepo) {
+    protected BaseGameController(DittoGameService gameRepo,
+                                 DittoQuestionService questionRepo,
+                                 DittoAnswerService answerRepo) {
         this.gameRepo = gameRepo;
         this.questionRepo = questionRepo;
         this.answerRepo = answerRepo;

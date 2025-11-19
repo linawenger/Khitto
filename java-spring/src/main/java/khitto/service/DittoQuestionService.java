@@ -3,9 +3,11 @@ package khitto.service;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import com.ditto.java.Ditto;
 import com.ditto.java.DittoError;
+import com.ditto.java.DittoQueryResult;
 import com.ditto.java.DittoQueryResultItem;
 import com.ditto.java.DittoStoreObserver;
 import com.ditto.java.DittoSyncSubscription;
@@ -25,40 +27,70 @@ public class DittoQuestionService {
         this.dittoService = dittoService;
     }
 
-    public void addQuestion(@Nonnull String content) {
-        dittoService.getDitto().getStore().execute(
-                "INSERT INTO %s DOCUMENTS (:newQuestion)".formatted(QUESTIONS_COLLECTION_NAME),
-                DittoCborSerializable.Dictionary.buildDictionary()
-                                                .put("newQuestion",
-                                                        DittoCborSerializable.Dictionary.buildDictionary()
-                                                                                        .put("_id", UUID.randomUUID().toString())
-                                                                                        .put("content", content)
-                                                                                        .build())
-                                                .build()
-        ).toCompletableFuture().join();
+    /* =========================
+     *  API wie QuestionCsvRepository
+     * ========================= */
+
+    // questionRepo.findByGameId(int)
+    public java.util.List<khitto.model.Question> findByGameId(int gameId) {
+        Ditto ditto = dittoService.getDitto();
+        DittoQueryResult result = ditto.getStore()
+                                       .execute(
+                                               "SELECT * FROM %s WHERE gameId = :gameId".formatted(QUESTIONS_COLLECTION_NAME),
+                                               DittoCborSerializable.Dictionary.buildDictionary()
+                                                                               .put("gameId", String.valueOf(gameId))
+                                                                               .build())
+                                       .toCompletableFuture()
+                                       .join();
+
+        try {
+            return result.getItems().stream()
+                         .map(this::itemToModelQuestion)
+                         .collect(Collectors.toList());
+        } finally {
+            closeQuietly(result);
+        }
     }
 
-    public void updateQuestion(@Nonnull String qid, @Nonnull String newContent) {
-        dittoService.getDitto().getStore().execute(
-                "UPDATE %s SET content = :newContent WHERE _id = :qid".formatted(QUESTIONS_COLLECTION_NAME),
-                DittoCborSerializable.Dictionary.buildDictionary()
-                                                .put("newContent", newContent)
-                                                .put("qid", qid)
-                                                .build()
-        ).toCompletableFuture().join();
+    // questionRepo.getNextOddId()
+    public int getNextOddId() {
+        List<khitto.model.Question> all = findAllInternal();
+        int max = all.stream().mapToInt(khitto.model.Question::getId).max().orElse(0);
+
+        int next = max < 1 ? 1 : max + 2;
+        return next % 2 == 1 ? next : next + 1;
     }
 
-    public void deleteQuestion(@Nonnull String qid) {
-        dittoService.getDitto().getStore().execute(
-                "DELETE FROM %s WHERE _id = :qid".formatted(QUESTIONS_COLLECTION_NAME),
-                DittoCborSerializable.Dictionary.buildDictionary()
-                                                .put("qid", qid)
-                                                .build()
-        ).toCompletableFuture().join();
+    // questionRepo.saveAll(List<Question>)
+    public void saveAll(java.util.List<khitto.model.Question> questions) {
+        Ditto ditto = dittoService.getDitto();
+
+        for (khitto.model.Question q : questions) {
+            DittoQueryResult result = ditto.getStore()
+                                           .execute(
+                                                   "INSERT INTO %s DOCUMENTS (:newQuestion)".formatted(QUESTIONS_COLLECTION_NAME),
+                                                   DittoCborSerializable.Dictionary.buildDictionary()
+                                                                                   .put("newQuestion",
+                                                                                           DittoCborSerializable.Dictionary.buildDictionary()
+                                                                                                                           .put("_id", UUID.randomUUID().toString())
+                                                                                                                           .put("id", String.valueOf(q.getId()))
+                                                                                                                           .put("gameId", String.valueOf(q.getGameId()))
+                                                                                                                           .put("content", q.getContent())
+                                                                                                                           .put("correctAnswerId", String.valueOf(q.getCorrectAnswerId()))
+                                                                                                                           .build())
+                                                                                   .build())
+                                           .toCompletableFuture()
+                                           .join();
+            closeQuietly(result);
+        }
     }
+
+    /* =========================
+     *  (Optional) reactive observeAll
+     * ========================= */
 
     @Nonnull
-    public Flux<List<Question>> observeAll() {
+    public Flux<java.util.List<khitto.model.Question>> observeAll() {
         final String query = "SELECT * FROM %s ORDER BY content ASC".formatted(QUESTIONS_COLLECTION_NAME);
 
         return Flux.create(emitter -> {
@@ -66,7 +98,7 @@ public class DittoQuestionService {
             try {
                 DittoSyncSubscription subscription = ditto.getSync().registerSubscription(query);
                 DittoStoreObserver observer = ditto.getStore().registerObserver(query, results ->
-                        emitter.next(results.getItems().stream().map(this::itemToQuestion).toList())
+                        emitter.next(results.getItems().stream().map(this::itemToModelQuestion).toList())
                 );
 
                 emitter.onDispose(() -> {
@@ -83,11 +115,55 @@ public class DittoQuestionService {
         }, FluxSink.OverflowStrategy.LATEST);
     }
 
-    private Question itemToQuestion(@Nonnull DittoQueryResultItem item) {
+    /* =========================
+     *  intern
+     * ========================= */
+
+    private java.util.List<khitto.model.Question> findAllInternal() {
+        Ditto ditto = dittoService.getDitto();
+        DittoQueryResult result = ditto.getStore()
+                                       .execute("SELECT * FROM %s".formatted(QUESTIONS_COLLECTION_NAME))
+                                       .toCompletableFuture()
+                                       .join();
+
+        try {
+            return result.getItems().stream()
+                         .map(this::itemToModelQuestion)
+                         .collect(Collectors.toList());
+        } finally {
+            closeQuietly(result);
+        }
+    }
+
+    private khitto.model.Question itemToModelQuestion(@Nonnull DittoQueryResultItem item) {
         var value = item.getValue();
-        return new Question(
-                value.get("_id").getString(),
-                value.get("content").getString()
-        );
+
+        String idStr       = value.get("id")       != null ? value.get("id").getString()       : "0";
+        String gameIdStr   = value.get("gameId")   != null ? value.get("gameId").getString()   : "0";
+        String content     = value.get("content")  != null ? value.get("content").getString()  : "";
+        String correctStr  = value.get("correctAnswerId") != null ? value.get("correctAnswerId").getString() : "0";
+
+        int id       = parseIntSafe(idStr, 0);
+        int gameId   = parseIntSafe(gameIdStr, 0);
+        int correct  = parseIntSafe(correctStr, 0);
+
+        return new khitto.model.Question(id, gameId, content, correct);
+    }
+
+    private int parseIntSafe(String s, int fallback) {
+        try {
+            return Integer.parseInt(s);
+        } catch (Exception e) {
+        }
+        return fallback;
+    }
+
+    private void closeQuietly(DittoQueryResult result) {
+        if (result == null) return;
+        try {
+            result.close();
+        } catch (IOException e) {
+            // ignore
+        }
     }
 }
