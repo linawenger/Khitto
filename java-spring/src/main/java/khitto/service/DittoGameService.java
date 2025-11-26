@@ -24,13 +24,13 @@ public class DittoGameService {
 
     public DittoGameService(DittoService dittoService) {
         this.dittoService = dittoService;
+
+        Ditto ditto = dittoService.getDitto();
+        try {
+            ditto.getSync().registerSubscription("SELECT * FROM %s".formatted(GAMES_COLLECTION_NAME));
+        } catch (DittoError ignored) {}
     }
 
-    /* =========================
-     *  API wie GameCsvRepository
-     * ========================= */
-
-    // entspricht gameRepo.findAll()
     public java.util.List<khitto.model.Game> findAll() {
         final String query = "SELECT * FROM %s".formatted(GAMES_COLLECTION_NAME);
         Ditto ditto = dittoService.getDitto();
@@ -48,7 +48,6 @@ public class DittoGameService {
         }
     }
 
-    // entspricht gameRepo.findById(int)
     public java.util.Optional<khitto.model.Game> findById(int id) {
         final String query = "SELECT * FROM %s WHERE id = :id".formatted(GAMES_COLLECTION_NAME);
         Ditto ditto = dittoService.getDitto();
@@ -69,11 +68,9 @@ public class DittoGameService {
         }
     }
 
-    // entspricht gameRepo.save(Game)
     public void save(khitto.model.Game game) {
         Ditto ditto = dittoService.getDitto();
 
-        // 1) Alles mit dieser ID löschen (entspricht: Liste ohne dieses Game neu schreiben)
         DittoQueryResult deleteResult = ditto.getStore()
                                              .execute(
                                                      "DELETE FROM %s WHERE id = :id".formatted(GAMES_COLLECTION_NAME),
@@ -85,7 +82,6 @@ public class DittoGameService {
                                              .join();
         closeQuietly(deleteResult);
 
-        // 2) Neues/aktuelles Game als einzigen Datensatz mit dieser ID einfügen
         DittoCborSerializable.Dictionary gameDoc =
                 DittoCborSerializable.Dictionary.buildDictionary()
                                                 .put("_id", UUID.randomUUID().toString())
@@ -108,7 +104,6 @@ public class DittoGameService {
     }
 
 
-    // entspricht gameRepo.delete(int)
     public void delete(int id) {
         Ditto ditto = dittoService.getDitto();
         DittoQueryResult result = ditto.getStore()
@@ -122,17 +117,12 @@ public class DittoGameService {
         closeQuietly(result);
     }
 
-    // entspricht gameRepo.getNextId()
     public int getNextId() {
         return findAll().stream()
                         .mapToInt(khitto.model.Game::getId)
                         .max()
                         .orElse(0) + 1;
     }
-
-    /* =========================
-     *  Reactive API (optional, falls du observeAll brauchst)
-     * ========================= */
 
     @Nonnull
     public Flux<java.util.List<khitto.model.Game>> observeAll() {
@@ -159,10 +149,6 @@ public class DittoGameService {
             }
         }, FluxSink.OverflowStrategy.LATEST);
     }
-
-    /* =========================
-     *  Mapping Helper
-     * ========================= */
 
     private khitto.model.Game itemToModelGame(@Nonnull DittoQueryResultItem item) {
         var value = item.getValue();

@@ -83,6 +83,13 @@ public class DittoService implements DisposableBean {
         presenceObserver = observePeersPresence();
 
         syncStateObserver = setupAndObserveSyncState();
+
+        try {
+            setSyncStateIntoDittoStore(true);
+        } catch (DittoError e) {
+            throw new RuntimeException("Failed to enable sync on startup", e);
+        }
+
     }
 
     @Override

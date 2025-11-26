@@ -25,13 +25,13 @@ public class DittoQuestionService {
 
     public DittoQuestionService(DittoService dittoService) {
         this.dittoService = dittoService;
+
+        Ditto ditto = dittoService.getDitto();
+        try {
+            ditto.getSync().registerSubscription("SELECT * FROM %s".formatted(QUESTIONS_COLLECTION_NAME));
+        } catch (DittoError ignored) {}
     }
 
-    /* =========================
-     *  API wie QuestionCsvRepository
-     * ========================= */
-
-    // questionRepo.findByGameId(int)
     public java.util.List<khitto.model.Question> findByGameId(int gameId) {
         Ditto ditto = dittoService.getDitto();
         DittoQueryResult result = ditto.getStore()
@@ -52,7 +52,6 @@ public class DittoQuestionService {
         }
     }
 
-    // questionRepo.getNextOddId()
     public int getNextOddId() {
         List<khitto.model.Question> all = findAllInternal();
         int max = all.stream().mapToInt(khitto.model.Question::getId).max().orElse(0);
@@ -61,7 +60,6 @@ public class DittoQuestionService {
         return next % 2 == 1 ? next : next + 1;
     }
 
-    // questionRepo.saveAll(List<Question>)
     public void saveAll(java.util.List<khitto.model.Question> questions) {
         Ditto ditto = dittoService.getDitto();
 
@@ -84,10 +82,6 @@ public class DittoQuestionService {
             closeQuietly(result);
         }
     }
-
-    /* =========================
-     *  (Optional) reactive observeAll
-     * ========================= */
 
     @Nonnull
     public Flux<java.util.List<khitto.model.Question>> observeAll() {
@@ -114,10 +108,6 @@ public class DittoQuestionService {
             }
         }, FluxSink.OverflowStrategy.LATEST);
     }
-
-    /* =========================
-     *  intern
-     * ========================= */
 
     private java.util.List<khitto.model.Question> findAllInternal() {
         Ditto ditto = dittoService.getDitto();
