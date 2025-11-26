@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Result</title>
+  <link rel="stylesheet" th:href="@{/style.css}" />
+</head>
+<body>
+
+<div th:replace="~{fragments/navigation-bar :: navigation-bar(
+        ~{fragments/navigation-bar-elements :: back-to-menu},
+        'Result',
+        ~{fragments/navigation-bar-elements :: game-next})}">
+</div>
+
+<div class="page center-screen">
+  <div class="box">
+    <p>Result screen placeholder.</p>
+  </div>
+</div>
+
+</body>
+</html>
