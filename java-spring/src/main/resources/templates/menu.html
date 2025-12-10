@@ -14,11 +14,17 @@
 
 <div class="page">
   <div class="grid-games">
-    <a th:each="game : ${games}"
-       th:href="@{/games/{id}(id=${game.id})}"
-       class="game-card">
-      <span th:text="${game.name}">Game</span>
-    </a>
+    <div th:each="game : ${games}" class="game-card" style="display:flex; flex-direction:column; gap:4px;">
+      <a th:href="@{/games/{id}(id=${game.id})}" class="game-card-link" style="flex:1;">
+        <span th:text="${game.name}">Game</span>
+      </a>
+
+      <form th:action="@{/games/{id}/delete(id=${game.id})}" method="post">
+        <button type="submit" class="button button-delete">
+          Delete
+        </button>
+      </form>
+    </div>
 
     <form th:action="@{/games/new}" method="post" class="game-card" style="gap:4px;">
       <button type="submit" class="button" style="width:100%;">

@@ -42,6 +42,24 @@ public class DittoGameService {
         try {
             return result.getItems().stream()
                          .map(this::itemToModelGame)
+                         .filter(g -> !g.isDeleted())
+                         .collect(Collectors.toList());
+        } finally {
+            closeQuietly(result);
+        }
+    }
+
+    private java.util.List<khitto.model.Game> findAllIncludingDeleted() {
+        final String query = "SELECT * FROM %s".formatted(GAMES_COLLECTION_NAME);
+        Ditto ditto = dittoService.getDitto();
+        DittoQueryResult result = ditto.getStore()
+                                       .execute(query)
+                                       .toCompletableFuture()
+                                       .join();
+
+        try {
+            return result.getItems().stream()
+                         .map(this::itemToModelGame)
                          .collect(Collectors.toList());
         } finally {
             closeQuietly(result);
@@ -89,6 +107,7 @@ public class DittoGameService {
                                                 .put("name", game.getName())
                                                 .put("status", String.valueOf(game.getStatus()))
                                                 .put("finished", String.valueOf(game.isFinished()))
+                                                .put("deleted", String.valueOf(game.isDeleted()))
                                                 .build();
 
         DittoQueryResult insertResult = ditto.getStore()
@@ -105,20 +124,14 @@ public class DittoGameService {
 
 
     public void delete(int id) {
-        Ditto ditto = dittoService.getDitto();
-        DittoQueryResult result = ditto.getStore()
-                                       .execute(
-                                               "DELETE FROM %s WHERE id = :id".formatted(GAMES_COLLECTION_NAME),
-                                               DittoCborSerializable.Dictionary.buildDictionary()
-                                                                               .put("id", String.valueOf(id))
-                                                                               .build())
-                                       .toCompletableFuture()
-                                       .join();
-        closeQuietly(result);
+        findById(id).ifPresent(game -> {
+            game.setDeleted(true);
+            save(game);
+        });
     }
 
     public int getNextId() {
-        return findAll().stream()
+        return findAllIncludingDeleted().stream()
                         .mapToInt(khitto.model.Game::getId)
                         .max()
                         .orElse(0) + 1;
@@ -157,12 +170,14 @@ public class DittoGameService {
         String name       = value.get("name")     != null ? value.get("name").getString()     : "";
         String statusStr  = value.get("status")   != null ? value.get("status").getString()   : "0";
         String finishedStr= value.get("finished") != null ? value.get("finished").getString() : "false";
+        String deletedStr = value.get("deleted")  != null ? value.get("deleted").getString()  : "false"; // 🔥 neu
 
         int id = parseIntSafe(idStr, 0);
         int status = parseIntSafe(statusStr, 0);
         boolean finished = Boolean.parseBoolean(finishedStr);
+        boolean deleted  = Boolean.parseBoolean(deletedStr);
 
-        return new khitto.model.Game(id, name, status, finished);
+        return new khitto.model.Game(id, name, status, finished, deleted);
     }
 
     private int parseIntSafe(String s, int fallback) {

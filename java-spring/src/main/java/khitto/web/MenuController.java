@@ -28,4 +28,10 @@ public class MenuController extends BaseGameController {
         gameRepo.save(g);
         return "redirect:/maker/" + id;
     }
+
+    @PostMapping("/games/{id}/delete")
+    public String deleteGame(@PathVariable int id) {
+        gameRepo.delete(id);
+        return "redirect:/";
+    }
 }
