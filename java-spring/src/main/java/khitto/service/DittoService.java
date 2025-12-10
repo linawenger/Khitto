@@ -84,7 +84,7 @@ public class DittoService implements DisposableBean {
         syncStateObserver = setupAndObserveSyncState();
 
         try {
-            setSyncStateIntoDittoStore(true);
+            setSyncStateTrue();
         } catch (DittoError e) {
             throw new RuntimeException("Failed to enable sync on startup", e);
         }
@@ -166,11 +166,11 @@ public class DittoService implements DisposableBean {
         }
     }
 
-    private void setSyncStateIntoDittoStore(boolean newState) throws DittoError {
+    private void setSyncStateTrue() throws DittoError {
         CompletionStage<DittoQueryResult> future = ditto.getStore().execute(
                 "UPDATE %s SET %s = :syncState".formatted(DITTO_SYNC_STATE_COLLECTION, DITTO_SYNC_STATE_ID),
                 DittoCborSerializable.buildDictionary()
-                        .put("syncState", newState)
+                        .put("syncState", true)
                         .build()
         );
 

@@ -12,40 +12,35 @@ public final class ItemToModel {
     }
 
     private static String getString(DittoCborSerializable.Dictionary value,
-                                    String key,
-                                    String fallback) {
+                                    String key) {
         var v = value.get(key);
-        return (v != null) ? v.getString() : fallback;
+        return v.getString();
     }
 
     private static int getInt(DittoCborSerializable.Dictionary value,
-                              String key,
-                              int fallback) {
+                              String key) {
         var v = value.get(key);
-        if (v == null) return fallback;
         try {
             return Integer.parseInt(v.getString());
         } catch (Exception e) {
-            return fallback;
+            return 0;
         }
     }
 
     private static boolean getBool(DittoCborSerializable.Dictionary value,
-                                   String key,
-                                   boolean fallback) {
+                                   String key) {
         var v = value.get(key);
-        if (v == null) return fallback;
         return Boolean.parseBoolean(v.getString());
     }
 
     public static Game game(DittoQueryResultItem item) {
         var value = item.getValue();
 
-        int id         = getInt(value, "id", 0);
-        String name    = getString(value, "name", "");
-        int status     = getInt(value, "status", 0);
-        boolean finished = getBool(value, "finished", false);
-        boolean deleted  = getBool(value, "deleted", false);
+        int id         = getInt(value, "id");
+        String name    = getString(value, "name");
+        int status     = getInt(value, "status");
+        boolean finished = getBool(value, "finished");
+        boolean deleted  = getBool(value, "deleted");
 
         return new Game(id, name, status, finished, deleted);
     }
@@ -53,10 +48,10 @@ public final class ItemToModel {
     public static Question question(DittoQueryResultItem item) {
         var value = item.getValue();
 
-        int id      = getInt(value, "id", 0);
-        int gameId  = getInt(value, "gameId", 0);
-        String text = getString(value, "content", "");
-        int correct = getInt(value, "correctAnswerId", 0);
+        int id      = getInt(value, "id");
+        int gameId  = getInt(value, "gameId");
+        String text = getString(value, "content");
+        int correct = getInt(value, "correctAnswerId");
 
         return new Question(id, gameId, text, correct);
     }
@@ -64,9 +59,9 @@ public final class ItemToModel {
     public static Answer answer(DittoQueryResultItem item) {
         var value = item.getValue();
 
-        int id         = getInt(value, "id", 0);
-        int questionId = getInt(value, "questionId", 0);
-        String text    = getString(value, "content", "");
+        int id         = getInt(value, "id");
+        int questionId = getInt(value, "questionId");
+        String text    = getString(value, "content");
 
         return new Answer(id, questionId, text);
     }
