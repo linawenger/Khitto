@@ -172,28 +172,17 @@ public class DittoGameService {
         String finishedStr= value.get("finished") != null ? value.get("finished").getString() : "false";
         String deletedStr = value.get("deleted")  != null ? value.get("deleted").getString()  : "false"; // 🔥 neu
 
-        int id = parseIntSafe(idStr, 0);
-        int status = parseIntSafe(statusStr, 0);
+        int id = Integer.parseInt(idStr);
+        int status = Integer.parseInt(statusStr);
         boolean finished = Boolean.parseBoolean(finishedStr);
         boolean deleted  = Boolean.parseBoolean(deletedStr);
 
         return new khitto.model.Game(id, name, status, finished, deleted);
     }
 
-    private int parseIntSafe(String s, int fallback) {
-        try {
-            return Integer.parseInt(s);
-        } catch (Exception e) {
-        }
-        return fallback;
-    }
-
     private void closeQuietly(DittoQueryResult result) {
         if (result == null) return;
-        try {
-            result.close();
-        } catch (IOException e) {
-            // ignore
-        }
+        try {result.close();}
+        catch (IOException ignored) {}
     }
 }

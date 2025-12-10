@@ -83,6 +83,20 @@ public class DittoQuestionService {
         }
     }
 
+    public void deleteByGameId(int gameId) {
+        Ditto ditto = dittoService.getDitto();
+        DittoQueryResult result = ditto.getStore()
+                                       .execute(
+                                               "DELETE FROM %s WHERE gameId = :gid".formatted(QUESTIONS_COLLECTION_NAME),
+                                               DittoCborSerializable.Dictionary.buildDictionary()
+                                                                               .put("gid", String.valueOf(gameId))
+                                                                               .build()
+                                       )
+                                       .toCompletableFuture()
+                                       .join();
+        closeQuietly(result);
+    }
+
     @Nonnull
     public Flux<java.util.List<khitto.model.Question>> observeAll() {
         final String query = "SELECT * FROM %s ORDER BY content ASC".formatted(QUESTIONS_COLLECTION_NAME);
@@ -133,27 +147,16 @@ public class DittoQuestionService {
         String content     = value.get("content")  != null ? value.get("content").getString()  : "";
         String correctStr  = value.get("correctAnswerId") != null ? value.get("correctAnswerId").getString() : "0";
 
-        int id       = parseIntSafe(idStr, 0);
-        int gameId   = parseIntSafe(gameIdStr, 0);
-        int correct  = parseIntSafe(correctStr, 0);
+        int id       = Integer.parseInt(idStr);
+        int gameId   = Integer.parseInt(gameIdStr);
+        int correct  = Integer.parseInt(correctStr);
 
         return new khitto.model.Question(id, gameId, content, correct);
     }
 
-    private int parseIntSafe(String s, int fallback) {
-        try {
-            return Integer.parseInt(s);
-        } catch (Exception e) {
-        }
-        return fallback;
-    }
-
     private void closeQuietly(DittoQueryResult result) {
         if (result == null) return;
-        try {
-            result.close();
-        } catch (IOException e) {
-            // ignore
-        }
+        try {result.close();}
+        catch (IOException ignored) {}
     }
 }

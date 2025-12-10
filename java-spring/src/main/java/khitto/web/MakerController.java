@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Controller
@@ -21,7 +22,37 @@ public class MakerController extends BaseGameController {
     @GetMapping("/maker/{id}")
     public String maker(@PathVariable int id, Model model) {
         Game game = gameRepo.findById(id).orElseThrow();
+
+        List<Question> questions = questionRepo.findByGameId(id);
+        List<ExistingQuestion> existing = new ArrayList<>();
+
+        for (Question q : questions) {
+            List<Answer> answers = answerRepo.findByQuestionId(q.getId());
+            answers.sort(Comparator.comparingInt(Answer::getId));
+
+            String a1 = answers.size() > 0 ? answers.get(0).getContent() : "";
+            String a2 = answers.size() > 1 ? answers.get(1).getContent() : "";
+            String a3 = answers.size() > 2 ? answers.get(2).getContent() : "";
+            String a4 = answers.size() > 3 ? answers.get(3).getContent() : "";
+
+            int correctIndex = 1;
+            for (int i = 0; i < answers.size() && i < 4; i++) {
+                if (answers.get(i).getId() == q.getCorrectAnswerId()) {
+                    correctIndex = i + 1;
+                    break;
+                }
+            }
+
+            existing.add(new ExistingQuestion(
+                    q.getContent(),
+                    a1, a2, a3, a4,
+                    correctIndex
+            ));
+        }
+
         model.addAttribute("game", game);
+        model.addAttribute("existingQuestions", existing); // kann auch leer sein
+
         return "maker/maker";
     }
 
@@ -39,6 +70,12 @@ public class MakerController extends BaseGameController {
         game.setName(name);
         game.setFinished(true);
         gameRepo.save(game);
+
+        List<Question> oldQuestions = questionRepo.findByGameId(id);
+        for (Question q : oldQuestions) {
+            answerRepo.deleteByQuestionId(q.getId());
+        }
+        questionRepo.deleteByGameId(id);
 
         List<String> qSafe      = (questions != null) ? questions : List.of();
         List<String> a1Safe     = (a1 != null) ? a1 : List.of();
@@ -63,7 +100,7 @@ public class MakerController extends BaseGameController {
             String ans3 = (a3Safe.size() > i) ? a3Safe.get(i) : "";
             String ans4 = (a4Safe.size() > i) ? a4Safe.get(i) : "";
 
-            int correctIndex = (correctSafe.size() > i) ? correctSafe.get(i) : 1; // fallback: 1
+            int correctIndex = (correctSafe.size() > i) ? correctSafe.get(i) : 1;
 
             int baseAnswerId = answerRepo.getNextId();
             List<String> answerTexts = List.of(ans1, ans2, ans3, ans4);
@@ -91,6 +128,7 @@ public class MakerController extends BaseGameController {
 
         return "redirect:/";
     }
+
 
     @PostMapping("/maker/{id}/cancel")
     public String cancel(@PathVariable int id) {

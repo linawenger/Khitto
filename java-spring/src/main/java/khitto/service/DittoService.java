@@ -25,7 +25,6 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import quickstart.configuration.DittoConfigurationKeys;
-import reactor.core.publisher.Flux;
 import reactor.core.publisher.Sinks;
 
 @Component
@@ -104,19 +103,6 @@ public class DittoService implements DisposableBean {
     @NotNull
     public Ditto getDitto() {
         return ditto;
-    }
-
-    public Flux<Boolean> getSyncState() {
-        return mutableSyncStatePublisher.asFlux();
-    }
-
-    public void toggleSync() {
-        try {
-            boolean currentSyncState = mutableSyncStatePublisher.asFlux().blockFirst();
-            setSyncStateIntoDittoStore(!currentSyncState);
-        } catch (DittoError e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private DittoAsyncCancellable observePeersPresence() {

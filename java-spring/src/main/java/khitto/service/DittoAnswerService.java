@@ -78,6 +78,20 @@ public class DittoAnswerService {
         }
     }
 
+    public void deleteByQuestionId(int questionId) {
+        Ditto ditto = dittoService.getDitto();
+        DittoQueryResult result = ditto.getStore()
+                                       .execute(
+                                               "DELETE FROM %s WHERE questionId = :qid".formatted(ANSWERS_COLLECTION_NAME),
+                                               DittoCborSerializable.Dictionary.buildDictionary()
+                                                                               .put("qid", String.valueOf(questionId))
+                                                                               .build()
+                                       )
+                                       .toCompletableFuture()
+                                       .join();
+        closeQuietly(result);
+    }
+
     @Nonnull
     public Flux<java.util.List<khitto.model.Answer>> observeAll() {
         final String query = "SELECT * FROM %s ORDER BY content ASC".formatted(ANSWERS_COLLECTION_NAME);
@@ -127,26 +141,15 @@ public class DittoAnswerService {
         String qidStr = value.get("questionId")!= null ? value.get("questionId").getString(): "0";
         String content= value.get("content")   != null ? value.get("content").getString()   : "";
 
-        int id  = parseIntSafe(idStr, 0);
-        int qid = parseIntSafe(qidStr, 0);
+        int id  = Integer.parseInt(idStr);
+        int qid = Integer.parseInt(qidStr);
 
         return new khitto.model.Answer(id, qid, content);
     }
 
-    private int parseIntSafe(String s, int fallback) {
-        try {
-            return Integer.parseInt(s);
-        } catch (Exception e) {
-        }
-        return fallback;
-    }
-
     private void closeQuietly(DittoQueryResult result) {
         if (result == null) return;
-        try {
-            result.close();
-        } catch (IOException e) {
-            // ignore
-        }
+        try {result.close();}
+        catch (IOException ignored) {}
     }
 }

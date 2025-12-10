@@ -13,7 +13,6 @@
         ~{fragments/navigation-bar-elements :: maker-publish})}">
 </div>
 
-
 <div class="page">
   <form id="makerForm" th:action="@{/maker/{id}/publish(id=${game.id})}" method="post">
     <div class="box" style="text-align:left;">
@@ -31,6 +30,11 @@
 
 <div th:replace="~{maker/questionLayout :: questionTemplateFragment}">
 </div>
+
+<script th:inline="javascript">
+  window.existingQuestions = /*[[${existingQuestions}]]*/ [];
+</script>
+
 
 </body>
 </html>
