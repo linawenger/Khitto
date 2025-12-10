@@ -14,18 +14,25 @@
 
 <div class="page">
   <div class="grid-games">
-    <div th:each="game : ${games}" class="game-card" style="display:flex; flex-direction:column; gap:4px;">
-      <a th:href="@{/games/{id}(id=${game.id})}" class="game-card-link" style="flex:1;">
+    <div th:each="game : ${games}" class="game-card" style="display:flex; flex-direction:column; gap:6px;">
+      <a th:href="@{/games/{id}(id=${game.id})}"
+         class="game-card-link"
+         style="flex:1; display:flex; align-items:center; justify-content:center;">
         <span th:text="${game.name}">Game</span>
       </a>
-
-      <form th:action="@{/games/{id}/delete(id=${game.id})}" method="post">
-        <button type="submit" class="button button-delete">
-          Delete
-        </button>
-      </form>
+      <div class="game-card-actions" style="display:flex; gap:6px; justify-content:space-between;">
+        <a th:href="@{/maker/{id}(id=${game.id})}"
+           class="button"
+           style="flex:1; text-align:center;">
+          Modify
+        </a>
+        <form th:action="@{/games/{id}/delete(id=${game.id})}" method="post" style="flex:1;">
+          <button type="submit" class="button button-delete" style="width:100%;">
+            Delete
+          </button>
+        </form>
+      </div>
     </div>
-
     <form th:action="@{/games/new}" method="post" class="game-card" style="gap:4px;">
       <button type="submit" class="button" style="width:100%;">
         + New Game
