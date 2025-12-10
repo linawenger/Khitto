@@ -8,30 +8,30 @@ import java.util.stream.Collectors;
 import com.ditto.java.Ditto;
 import com.ditto.java.DittoError;
 import com.ditto.java.DittoQueryResult;
-import com.ditto.java.DittoQueryResultItem;
-import com.ditto.java.DittoStoreObserver;
-import com.ditto.java.DittoSyncSubscription;
 import com.ditto.java.serialization.DittoCborSerializable;
 import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
-import reactor.core.publisher.FluxSink;
 
 @Component
 public class DittoAnswerService {
 
     private static final String ANSWERS_COLLECTION_NAME = "answers";
     private final DittoService dittoService;
+    private final DittoObservationService observationService;
 
-    public DittoAnswerService(DittoService dittoService) {
+    public DittoAnswerService(DittoService dittoService,
+                              DittoObservationService observationService) {
         this.dittoService = dittoService;
+        this.observationService = observationService;
+
         Ditto ditto = dittoService.getDitto();
         try {
             ditto.getSync().registerSubscription("SELECT * FROM %s".formatted(ANSWERS_COLLECTION_NAME));
         } catch (DittoError ignored) {}
     }
 
-    public java.util.List<khitto.model.Answer> findByQuestionId(int questionId) {
+    public List<khitto.model.Answer> findByQuestionId(int questionId) {
         Ditto ditto = dittoService.getDitto();
         DittoQueryResult result = ditto.getStore()
                                        .execute(
@@ -44,7 +44,7 @@ public class DittoAnswerService {
 
         try {
             return result.getItems().stream()
-                         .map(this::itemToModelAnswer)
+                         .map(ItemToModel::answer)
                          .collect(Collectors.toList());
         } finally {
             closeQuietly(result);
@@ -56,7 +56,7 @@ public class DittoAnswerService {
         return all.stream().mapToInt(khitto.model.Answer::getId).max().orElse(0) + 1;
     }
 
-    public void saveAll(java.util.List<khitto.model.Answer> answers) {
+    public void saveAll(List<khitto.model.Answer> answers) {
         Ditto ditto = dittoService.getDitto();
 
         for (khitto.model.Answer a : answers) {
@@ -92,33 +92,7 @@ public class DittoAnswerService {
         closeQuietly(result);
     }
 
-    @Nonnull
-    public Flux<java.util.List<khitto.model.Answer>> observeAll() {
-        final String query = "SELECT * FROM %s ORDER BY content ASC".formatted(ANSWERS_COLLECTION_NAME);
-
-        return Flux.create(emitter -> {
-            Ditto ditto = dittoService.getDitto();
-            try {
-                DittoSyncSubscription subscription = ditto.getSync().registerSubscription(query);
-                DittoStoreObserver observer = ditto.getStore().registerObserver(query, results ->
-                        emitter.next(results.getItems().stream().map(this::itemToModelAnswer).toList())
-                );
-
-                emitter.onDispose(() -> {
-                    try {
-                        subscription.close();
-                        observer.close();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
-            } catch (DittoError e) {
-                emitter.error(e);
-            }
-        }, FluxSink.OverflowStrategy.LATEST);
-    }
-
-    private java.util.List<khitto.model.Answer> findAllInternal() {
+    private List<khitto.model.Answer> findAllInternal() {
         Ditto ditto = dittoService.getDitto();
         DittoQueryResult result = ditto.getStore()
                                        .execute("SELECT * FROM %s".formatted(ANSWERS_COLLECTION_NAME))
@@ -127,29 +101,22 @@ public class DittoAnswerService {
 
         try {
             return result.getItems().stream()
-                         .map(this::itemToModelAnswer)
+                         .map(ItemToModel::answer)
                          .collect(Collectors.toList());
         } finally {
             closeQuietly(result);
         }
     }
 
-    private khitto.model.Answer itemToModelAnswer(@Nonnull DittoQueryResultItem item) {
-        var value = item.getValue();
-
-        String idStr  = value.get("id")        != null ? value.get("id").getString()        : "0";
-        String qidStr = value.get("questionId")!= null ? value.get("questionId").getString(): "0";
-        String content= value.get("content")   != null ? value.get("content").getString()   : "";
-
-        int id  = Integer.parseInt(idStr);
-        int qid = Integer.parseInt(qidStr);
-
-        return new khitto.model.Answer(id, qid, content);
-    }
-
     private void closeQuietly(DittoQueryResult result) {
         if (result == null) return;
         try {result.close();}
         catch (IOException ignored) {}
+    }
+
+    @Nonnull
+    public Flux<List<khitto.model.Answer>> observeAll() {
+        final String query = "SELECT * FROM %s ORDER BY content ASC".formatted(ANSWERS_COLLECTION_NAME);
+        return observationService.observeList(query, ItemToModel::answer);
     }
 }
