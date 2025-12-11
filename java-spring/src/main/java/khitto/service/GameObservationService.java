@@ -15,7 +15,7 @@ public class GameObservationService {
             "SELECT * FROM games";
 
     private static final String DISPLAY_QUERY =
-            "SELECT * FROM games ORDER BY status ASC";
+            "SELECT * FROM games";
 
     private final Flux<List<Game>> gamesFlux;
 
@@ -26,9 +26,9 @@ public class GameObservationService {
                 .map(list -> list.stream()
                                  .filter(g -> !g.isDeleted())
                                  .collect(Collectors.toList()))
-                .sample(Duration.ofMillis(150))  // optional throttling
-                .replay(1)                       // letztes Ergebnis cachen
-                .refCount(1);                    // 1 Observer pro App, egal wie viele Tabs
+                .sample(Duration.ofMillis(150))
+                .replay(1)
+                .refCount(1);
     }
 
     public Flux<List<Game>> observeGames() {

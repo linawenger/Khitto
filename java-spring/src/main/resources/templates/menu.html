@@ -3,8 +3,6 @@
 <head>
   <title>Khitto Menu</title>
   <link rel="stylesheet" th:href="@{/style.css}" />
-  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
-  <script src="https://unpkg.com/htmx-ext-sse@2.2.2"></script>
 </head>
 <body>
 
@@ -15,17 +13,33 @@
 </div>
 
 <div class="page">
-
-  <div id="game-list-section"
-       hx-ext="sse"
-       sse-connect="/games/stream"
-       sse-swap="game_list"
-       hx-target="#game_list"
-       hx-swap="outerHTML">
-
-    <div th:replace="~{fragments/gameList :: gameListFrag(${games})}"></div>
+  <div id="gameList"
+       th:insert="~{fragments/gameList :: gameList(games=${games})}">
   </div>
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    console.log("Khitto Menu: init SSE");
+
+    const gameListContainer = document.getElementById("gameList");
+    if (!gameListContainer) {
+      console.log("Khitto Menu: #gameList not found");
+      return;
+    }
+
+    const eventSource = new EventSource("/games/stream");
+
+    eventSource.addEventListener("game_list", function (event) {
+      console.log("Khitto Menu: received game_list event");
+      gameListContainer.innerHTML = event.data;
+    });
+
+    eventSource.onerror = function (err) {
+      console.error("Khitto Menu: SSE error", err);
+    };
+  });
+</script>
 
 </body>
 </html>

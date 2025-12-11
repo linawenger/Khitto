@@ -24,8 +24,10 @@ public class GameStreamController {
         this.templateEngine = templateEngine;
     }
 
-    @GetMapping(value = "/games/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @GetMapping(path = "/games/stream",
+            produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ServerSentEvent<String>> streamGames() {
+
         return gameObservationService
                 .observeGames()
                 .map(this::renderGamesFragment)
@@ -40,6 +42,8 @@ public class GameStreamController {
     private String renderGamesFragment(List<Game> games) {
         Context ctx = new Context();
         ctx.setVariable("games", games);
+        // wichtig: wir geben das Fragment OHNE :: zurück,
+        // die logische View heißt "fragments/gameList"
         return templateEngine.process("fragments/gameList", ctx);
     }
 }
