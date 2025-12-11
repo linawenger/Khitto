@@ -1,52 +1,45 @@
 package khitto.web.stream;
 
+import java.util.List;
+
 import khitto.model.Game;
-import khitto.service.DittoGameService;
-import jakarta.annotation.Nonnull;
+import khitto.service.GameObservationService;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import reactor.core.publisher.Flux;
 
-import java.util.List;
-import java.util.Set;
-
-@RestController
+@Controller
 public class GameStreamController {
 
-    @Nonnull
-    private final DittoGameService gameService;
-
-    @Nonnull
+    private final GameObservationService gameObservationService;
     private final SpringTemplateEngine templateEngine;
 
-    public GameStreamController(DittoGameService gameService,
+    public GameStreamController(GameObservationService gameObservationService,
                                 SpringTemplateEngine templateEngine) {
-        this.gameService = gameService;
+        this.gameObservationService = gameObservationService;
         this.templateEngine = templateEngine;
     }
 
     @GetMapping(value = "/games/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ServerSentEvent<String>> streamGames() {
-        return gameService.observeAll().map(this::renderGamesFragment);
+        return gameObservationService
+                .observeGames()
+                .map(this::renderGamesFragment)
+                .map(html ->
+                        ServerSentEvent.<String>builder()
+                                       .event("game_list")
+                                       .data(html)
+                                       .build()
+                );
     }
 
-    @Nonnull
-    private ServerSentEvent<String> renderGamesFragment(@Nonnull List<Game> games) {
+    private String renderGamesFragment(List<Game> games) {
         Context ctx = new Context();
         ctx.setVariable("games", games);
-
-        String html = templateEngine.process(
-                "fragments/gameList",
-                Set.of("gameListFrag"),
-                ctx
-        );
-
-        return ServerSentEvent.<String>builder(html)
-                              .event("game_list")
-                              .build();
+        return templateEngine.process("fragments/gameList", ctx);
     }
 }

@@ -15,10 +15,13 @@
 </div>
 
 <div class="page">
+
   <div id="game-list-section"
        hx-ext="sse"
        sse-connect="/games/stream"
-       sse-swap="game_list">
+       sse-swap="game_list"
+       hx-target="#game_list"
+       hx-swap="outerHTML">
 
     <div th:replace="~{fragments/gameList :: gameListFrag(${games})}"></div>
   </div>

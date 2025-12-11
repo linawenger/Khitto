@@ -2,46 +2,36 @@ package khitto.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import com.ditto.java.Ditto;
-import com.ditto.java.DittoError;
 import com.ditto.java.DittoQueryResult;
 import com.ditto.java.serialization.DittoCborSerializable;
-import jakarta.annotation.Nonnull;
+import khitto.model.Game;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Flux;
 
 @Component
 public class DittoGameService {
 
     private static final String GAMES_COLLECTION_NAME = "games";
+
     private final DittoService dittoService;
-    private final DittoObservationService observationService;
 
-    public DittoGameService(DittoService dittoService,
-                            DittoObservationService observationService) {
+    public DittoGameService(DittoService dittoService) {
         this.dittoService = dittoService;
-        this.observationService = observationService;
-
-        Ditto ditto = dittoService.getDitto();
-        try {
-            ditto.getSync()
-                 .registerSubscription("SELECT * FROM %s".formatted(GAMES_COLLECTION_NAME));
-        } catch (DittoError ignored) {
-        }
     }
 
-    public List<khitto.model.Game> findAll() {
+    public List<Game> findAll() {
         return loadAllGamesRaw().stream()
                                 .filter(g -> !g.isDeleted())
-                                .collect(Collectors.toList());
+                                .toList();
     }
 
-    public java.util.Optional<khitto.model.Game> findById(int id) {
+    public Optional<Game> findById(int id) {
         final String query = "SELECT * FROM %s WHERE id = :id".formatted(GAMES_COLLECTION_NAME);
         Ditto ditto = dittoService.getDitto();
+
         DittoQueryResult result = ditto.getStore()
                                        .execute(query,
                                                DittoCborSerializable.Dictionary.buildDictionary()
@@ -59,9 +49,10 @@ public class DittoGameService {
         }
     }
 
-    public void save(khitto.model.Game game) {
+    public void save(Game game) {
         Ditto ditto = dittoService.getDitto();
 
+        // Alte Version (falls vorhanden) löschen
         DittoQueryResult deleteResult = ditto.getStore()
                                              .execute(
                                                      "DELETE FROM %s WHERE id = :id".formatted(GAMES_COLLECTION_NAME),
@@ -73,6 +64,7 @@ public class DittoGameService {
                                              .join();
         closeQuietly(deleteResult);
 
+        // Neue Version einfügen
         DittoCborSerializable.Dictionary gameDoc =
                 DittoCborSerializable.Dictionary.buildDictionary()
                                                 .put("_id", UUID.randomUUID().toString())
@@ -104,7 +96,7 @@ public class DittoGameService {
 
     public int getNextId() {
         return loadAllGamesRaw().stream()
-                                .mapToInt(khitto.model.Game::getId)
+                                .mapToInt(Game::getId)
                                 .max()
                                 .orElse(0) + 1;
     }
@@ -123,9 +115,10 @@ public class DittoGameService {
         });
     }
 
-    private List<khitto.model.Game> loadAllGamesRaw() {
+    private List<Game> loadAllGamesRaw() {
         final String query = "SELECT * FROM %s".formatted(GAMES_COLLECTION_NAME);
         Ditto ditto = dittoService.getDitto();
+
         DittoQueryResult result = ditto.getStore()
                                        .execute(query)
                                        .toCompletableFuture()
@@ -134,7 +127,7 @@ public class DittoGameService {
         try {
             return result.getItems().stream()
                          .map(ItemToModel::game)
-                         .collect(Collectors.toList());
+                         .toList();
         } finally {
             closeQuietly(result);
         }
@@ -142,18 +135,9 @@ public class DittoGameService {
 
     private void closeQuietly(DittoQueryResult result) {
         if (result == null) return;
-        try {result.close();}
-        catch (IOException ignored) {}
-    }
-
-    @Nonnull
-    public Flux<List<khitto.model.Game>> observeAll() {
-        final String subscriptionQuery = "SELECT * FROM %s".formatted(GAMES_COLLECTION_NAME);
-        final String displayQuery      = "SELECT * FROM %s ORDER BY status ASC".formatted(GAMES_COLLECTION_NAME);
-
-        return observationService.observeList(subscriptionQuery, displayQuery, ItemToModel::game)
-                                 .map(list -> list.stream()
-                                                  .filter(g -> !g.isDeleted())
-                                                  .collect(Collectors.toList()));
+        try {
+            result.close();
+        } catch (IOException ignored) {
+        }
     }
 }
