@@ -42,8 +42,6 @@ public class GameStreamController {
     private String renderGamesFragment(List<Game> games) {
         Context ctx = new Context();
         ctx.setVariable("games", games);
-        // wichtig: wir geben das Fragment OHNE :: zurück,
-        // die logische View heißt "fragments/gameList"
         return templateEngine.process("fragments/gameList", ctx);
     }
 }

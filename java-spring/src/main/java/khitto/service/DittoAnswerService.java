@@ -113,10 +113,4 @@ public class DittoAnswerService {
         try {result.close();}
         catch (IOException ignored) {}
     }
-
-    @Nonnull
-    public Flux<List<khitto.model.Answer>> observeAll() {
-        final String query = "SELECT * FROM %s ORDER BY content ASC".formatted(ANSWERS_COLLECTION_NAME);
-        return observationService.observeList(query, ItemToModel::answer);
-    }
 }

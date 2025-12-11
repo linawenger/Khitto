@@ -1,4 +1,3 @@
-// static/menu.js
 document.addEventListener("DOMContentLoaded", function () {
     const gameListContainer = document.getElementById("gameList");
     if (!gameListContainer) {

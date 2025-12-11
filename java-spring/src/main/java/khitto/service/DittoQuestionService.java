@@ -119,10 +119,4 @@ public class DittoQuestionService {
         } catch (IOException ignored) {
         }
     }
-
-    @Nonnull
-    public Flux<List<khitto.model.Question>> observeAll() {
-        final String query = "SELECT * FROM %s ORDER BY content ASC".formatted(QUESTIONS_COLLECTION_NAME);
-        return observationService.observeList(query, ItemToModel::question);
-    }
 }

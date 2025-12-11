@@ -64,7 +64,6 @@ public class DittoGameService {
                                              .join();
         closeQuietly(deleteResult);
 
-        // Neue Version einfügen
         DittoCborSerializable.Dictionary gameDoc =
                 DittoCborSerializable.Dictionary.buildDictionary()
                                                 .put("_id", UUID.randomUUID().toString())
@@ -99,20 +98,6 @@ public class DittoGameService {
                                 .mapToInt(Game::getId)
                                 .max()
                                 .orElse(0) + 1;
-    }
-
-    public void markEditing(int id) {
-        findById(id).ifPresent(game -> {
-            game.setFinished(false);
-            save(game);
-        });
-    }
-
-    public void markFinished(int id) {
-        findById(id).ifPresent(game -> {
-            game.setFinished(true);
-            save(game);
-        });
     }
 
     private List<Game> loadAllGamesRaw() {

@@ -18,28 +18,7 @@
   </div>
 </div>
 
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    console.log("Khitto Menu: init SSE");
-
-    const gameListContainer = document.getElementById("gameList");
-    if (!gameListContainer) {
-      console.log("Khitto Menu: #gameList not found");
-      return;
-    }
-
-    const eventSource = new EventSource("/games/stream");
-
-    eventSource.addEventListener("game_list", function (event) {
-      console.log("Khitto Menu: received game_list event");
-      gameListContainer.innerHTML = event.data;
-    });
-
-    eventSource.onerror = function (err) {
-      console.error("Khitto Menu: SSE error", err);
-    };
-  });
-</script>
+<script th:src="@{/menu.js}"></script>
 
 </body>
 </html>
