@@ -27,13 +27,20 @@ public class DittoObservationService {
     @Nonnull
     public <T> Flux<List<T>> observeList(String query,
                                          Function<DittoQueryResultItem, T> mapper) {
+        return observeList(query, query, mapper);
+    }
+
+    @Nonnull
+    public <T> Flux<List<T>> observeList(String subscriptionQuery,
+                                         String displayQuery,
+                                         Function<DittoQueryResultItem, T> mapper) {
 
         return Flux.create(emitter -> {
             Ditto ditto = dittoService.getDitto();
             try {
-                DittoSyncSubscription subscription = ditto.getSync().registerSubscription(query);
+                DittoSyncSubscription subscription = ditto.getSync().registerSubscription(subscriptionQuery);
 
-                DittoStoreObserver observer = ditto.getStore().registerObserver(query, results -> {
+                DittoStoreObserver observer = ditto.getStore().registerObserver(displayQuery, results -> {
                     List<T> mapped = results.getItems()
                                             .stream()
                                             .map(mapper)

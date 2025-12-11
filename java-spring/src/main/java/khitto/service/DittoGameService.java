@@ -109,6 +109,20 @@ public class DittoGameService {
                                 .orElse(0) + 1;
     }
 
+    public void markEditing(int id) {
+        findById(id).ifPresent(game -> {
+            game.setFinished(false);
+            save(game);
+        });
+    }
+
+    public void markFinished(int id) {
+        findById(id).ifPresent(game -> {
+            game.setFinished(true);
+            save(game);
+        });
+    }
+
     private List<khitto.model.Game> loadAllGamesRaw() {
         final String query = "SELECT * FROM %s".formatted(GAMES_COLLECTION_NAME);
         Ditto ditto = dittoService.getDitto();
@@ -134,7 +148,12 @@ public class DittoGameService {
 
     @Nonnull
     public Flux<List<khitto.model.Game>> observeAll() {
-        final String query = "SELECT * FROM %s ORDER BY status ASC".formatted(GAMES_COLLECTION_NAME);
-        return observationService.observeList(query, ItemToModel::game);
+        final String subscriptionQuery = "SELECT * FROM %s".formatted(GAMES_COLLECTION_NAME);
+        final String displayQuery      = "SELECT * FROM %s ORDER BY status ASC".formatted(GAMES_COLLECTION_NAME);
+
+        return observationService.observeList(subscriptionQuery, displayQuery, ItemToModel::game)
+                                 .map(list -> list.stream()
+                                                  .filter(g -> !g.isDeleted())
+                                                  .collect(Collectors.toList()));
     }
 }

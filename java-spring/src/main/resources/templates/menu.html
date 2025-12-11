@@ -3,6 +3,8 @@
 <head>
   <title>Khitto Menu</title>
   <link rel="stylesheet" th:href="@{/style.css}" />
+  <script src="https://unpkg.com/htmx.org@2.0.4"></script>
+  <script src="https://unpkg.com/htmx-ext-sse@2.2.2"></script>
 </head>
 <body>
 
@@ -13,33 +15,12 @@
 </div>
 
 <div class="page">
-  <div class="grid-games">
-    <div th:each="game : ${games}" class="game-card" style="display:flex; flex-direction:column; gap:6px;">
+  <div id="game-list-section"
+       hx-ext="sse"
+       sse-connect="/games/stream"
+       sse-swap="game_list">
 
-      <a th:href="@{/games/{id}(id=${game.id})}"
-         class="game-card-link"
-         style="flex:1; display:flex; align-items:center; justify-content:center;">
-        <span th:text="${game.name}">Game</span>
-      </a>
-
-      <div class="game-card-actions" style="display:flex; gap:6px; justify-content:space-between;">
-
-        <form th:action="@{/maker/{id}(id=${game.id})}" method="get" style="flex:1;">
-          <button class="button" style="width:100%;">Modify</button>
-        </form>
-
-        <form th:action="@{/games/{id}/delete(id=${game.id})}" method="post" style="flex:1;">
-          <button class="button button-delete" style="width:100%;">Delete</button>
-        </form>
-
-      </div>
-    </div>
-
-    <form th:action="@{/games/new}" method="post" class="game-card" style="gap:4px;">
-      <button type="submit" class="button" style="width:100%;">
-        + New Game
-      </button>
-    </form>
+    <div th:replace="~{fragments/gameList :: gameListFrag(${games})}"></div>
   </div>
 </div>
 

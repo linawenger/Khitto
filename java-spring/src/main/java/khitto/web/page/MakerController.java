@@ -1,4 +1,4 @@
-package khitto.web;
+package khitto.web.page;
 
 import khitto.model.*;
 import khitto.service.*;

@@ -1,5 +1,6 @@
-package khitto.web;
+package khitto.web.page;
 
+import java.util.*;
 import khitto.model.*;
 import khitto.service.*;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,11 @@ public class MenuController extends BaseGameController {
 
     @GetMapping("/")
     public String menu(Model model) {
-        model.addAttribute("games", gameRepo.findAll());
+        List<Game> games = gameRepo.observeAll().blockFirst();
+        if (games == null) {
+            games = Collections.emptyList();
+        }
+        model.addAttribute("games", games);
         return "menu";
     }
 
