@@ -18,13 +18,15 @@ public class GamePlayController extends BaseGameController {
         super(gameRepo, questionRepo, answerRepo);
     }
 
+    private String redirectToHome() {
+        return "redirect:/";
+    }
+
     @GetMapping("/games/{id}")
     public String play(@PathVariable int id) {
         Game game = gameRepo.findById(id).orElseThrow();
 
-        if (!game.isFinished()) {
-            return "redirect:/maker/" + id;
-        }
+        if (!game.isFinished()) {return redirectToHome();}
 
         int status = game.getStatus();
 
@@ -43,7 +45,7 @@ public class GamePlayController extends BaseGameController {
         if (status > maxScreens) {
             game.setStatus(0);
             gameRepo.save(game);
-            return "redirect:/";
+            return redirectToHome();
         }
 
         if (status % 2 == 1) {
@@ -56,6 +58,9 @@ public class GamePlayController extends BaseGameController {
     @GetMapping("/games/{id}/start")
     public String start(@PathVariable int id, Model model) {
         Game game = gameRepo.findById(id).orElseThrow();
+
+        if (!game.isFinished()) {return redirectToHome();}
+
         model.addAttribute("game", game);
         return "start";
     }
@@ -63,6 +68,9 @@ public class GamePlayController extends BaseGameController {
     @PostMapping("/games/{id}/start")
     public String startGame(@PathVariable int id) {
         Game game = gameRepo.findById(id).orElseThrow();
+
+        if (!game.isFinished()) {return redirectToHome();}
+
         game.setStatus(1);
         gameRepo.save(game);
         return "redirect:/games/" + id;
@@ -73,6 +81,8 @@ public class GamePlayController extends BaseGameController {
                            @PathVariable int status,
                            Model model) {
         Game game = gameRepo.findById(id).orElseThrow();
+
+        if (!game.isFinished()) {return redirectToHome();}
 
         List<Question> questions = questionRepo.findByGameId(id)
                                                .stream()
@@ -97,6 +107,9 @@ public class GamePlayController extends BaseGameController {
     @PostMapping("/games/{id}/next")
     public String next(@PathVariable int id) {
         Game game = gameRepo.findById(id).orElseThrow();
+
+        if (!game.isFinished()) {return redirectToHome();}
+
         game.setStatus(game.getStatus() + 1);
         gameRepo.save(game);
         return "redirect:/games/" + id;
@@ -107,6 +120,9 @@ public class GamePlayController extends BaseGameController {
                          @PathVariable int status,
                          Model model) {
         Game game = gameRepo.findById(id).orElseThrow();
+
+        if (!game.isFinished()) {return redirectToHome();}
+
         model.addAttribute("game", game);
         return "result";
     }

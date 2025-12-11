@@ -1,22 +1,28 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<body>
-
 <div id="game_list" th:fragment="gameListFrag (games)">
 
     <div class="grid-games">
         <div th:each="game : ${games}"
-             class="game-card"
+             th:class="'game-card' + (${game.finished} ? '' : ' game-card-editing')"
              style="display:flex; flex-direction:column; gap:6px;">
 
-            <a th:href="@{~/games/{id}(id=${game.id})}"
+            <a th:if="${game.finished}"
+               th:href="@{~/games/{id}(id=${game.id})}"
                class="game-card-link"
                style="flex:1; display:flex; align-items:center; justify-content:center;">
                 <span th:text="${game.name}">Game</span>
             </a>
 
-            <div class="game-card-actions"
+            <div th:if="${!game.finished}"
+                 style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                <span th:text="${game.name}"
+                      style="font-weight:bold;">Game</span>
+                <span style="font-size:0.8rem;">currently being edited…</span>
+            </div>
+
+            <div th:if="${game.finished}"
+                 class="game-card-actions"
                  style="display:flex; gap:6px; justify-content:space-between;">
+
                 <a th:href="@{~/maker/{id}(id=${game.id})}"
                    class="button"
                    style="flex:1; text-align:center;">
@@ -37,15 +43,10 @@
 
         <form th:action="@{~/games/new}"
               method="post"
-              class="game-card"
-              style="gap:4px;">
+              class="game-card">
             <button type="submit" class="button" style="width:100%;">
                 + New Game
             </button>
         </form>
     </div>
-
 </div>
-
-</body>
-</html>

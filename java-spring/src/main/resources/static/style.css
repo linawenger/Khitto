@@ -88,6 +88,11 @@ body {
     transition: background 0.15s;
 }
 
+.game-card-editing {
+    background-color: rgba(255, 0, 0, 0.15);
+    border: 1px solid rgba(255, 0, 0, 0.4);
+}
+
 .game-card:hover {
     background: #cccccc;
     border-color: #b3b3b3;

@@ -23,6 +23,11 @@ public class MakerController extends BaseGameController {
     public String maker(@PathVariable int id, Model model) {
         Game game = gameRepo.findById(id).orElseThrow();
 
+        if (game.isFinished()) {
+            game.setFinished(false);
+            gameRepo.save(game);
+        }
+
         List<Question> questions = questionRepo.findByGameId(id);
         List<ExistingQuestion> existing = new ArrayList<>();
 
@@ -129,12 +134,17 @@ public class MakerController extends BaseGameController {
         return "redirect:/";
     }
 
-
     @PostMapping("/maker/{id}/cancel")
     public String cancel(@PathVariable int id) {
         Game game = gameRepo.findById(id).orElseThrow();
-        if (!game.isFinished()) {
+
+        boolean hasQuestions = !questionRepo.findByGameId(id).isEmpty();
+
+        if (!hasQuestions) {
             gameRepo.delete(id);
+        } else {
+            game.setFinished(true);
+            gameRepo.save(game);
         }
         return "redirect:/";
     }
