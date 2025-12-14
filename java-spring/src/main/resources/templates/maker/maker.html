@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Khitto Maker</title>
+  <link rel="stylesheet" th:href="@{/style.css}" />
+  <script defer th:src="@{/maker.js}"></script>
+</head>
+<body>
+
+<div th:replace="~{fragments/navigation-bar :: navigation-bar(
+        ~{fragments/navigation-bar-elements :: maker-cancel},
+        'Khitto Maker',
+        ~{fragments/navigation-bar-elements :: maker-publish})}">
+</div>
+
+<div class="page">
+  <form id="makerForm" th:action="@{/maker/{id}/publish(id=${game.id})}" method="post">
+    <div class="box" style="text-align:left;">
+      <label for="gameName">Game name</label>
+      <input id="gameName" class="input" name="name" th:value="${game.name}" />
+    </div>
+
+    <div id="questionList"></div>
+
+    <div style="margin-top:16px; text-align:center;">
+      <button type="button" id="addQuestionButton" class="button">Add question</button>
+    </div>
+  </form>
+</div>
+
+<div th:replace="~{maker/questionLayout :: questionTemplateFragment}">
+</div>
+
+<script th:inline="javascript">
+  window.existingQuestions = /*[[${existingQuestions}]]*/ [];
+</script>
+
+
+</body>
+</html>

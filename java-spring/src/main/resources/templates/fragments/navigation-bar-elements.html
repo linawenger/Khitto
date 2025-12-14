@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<th:block th:fragment="back-to-menu">
+    <a th:href="@{/}" class="button">Back to menu</a>
+</th:block>
+
+<th:block th:fragment="maker-cancel">
+    <form th:action="@{/maker/{id}/cancel(id=${game.id})}" method="post">
+        <button type="submit" class="button">Back to menu</button>
+    </form>
+</th:block>
+
+<th:block th:fragment="maker-publish">
+    <button class="button" type="button" onclick="document.getElementById('makerForm').submit()">Publish</button>
+</th:block>
+
+<th:block th:fragment="game-next">
+    <form th:action="@{/games/{id}/next(id=${game.id})}" method="post">
+        <button class="button" type="submit">Next</button>
+    </form>
+</th:block>
+
+</body>
+</html>

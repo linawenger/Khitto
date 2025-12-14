@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:fragment="questionTemplateFragment">
+<body>
+
+<template id="questionTemplate">
+    <div class="question-block">
+        <label class="question-label">Question</label>
+        <input class="input" name="q[]" placeholder="Question text" />
+
+        <div style="margin-top:8px;">Answers (one is correct):</div>
+        <div style="display:grid; gap:6px; margin-top:6px;">
+            <div>
+                <input class="input" name="a1[]" placeholder="Answer 1" />
+                <label><input type="radio" name="correct" value="1" checked /> correct</label>
+            </div>
+            <div>
+                <input class="input" name="a2[]" placeholder="Answer 2" />
+                <label><input type="radio" name="correct" value="2" /> correct</label>
+            </div>
+            <div>
+                <input class="input" name="a3[]" placeholder="Answer 3" />
+                <label><input type="radio" name="correct" value="3" /> correct</label>
+            </div>
+            <div>
+                <input class="input" name="a4[]" placeholder="Answer 4" />
+                <label><input type="radio" name="correct" value="4" /> correct</label>
+            </div>
+        </div>
+
+        <input type="hidden" name="correct[]" class="hidden-correct-answer" value="1" />
+    </div>
+</template>
+
+</body>
+</html>

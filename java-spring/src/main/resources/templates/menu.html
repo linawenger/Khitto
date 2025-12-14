@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Khitto Menu</title>
+  <link rel="stylesheet" th:href="@{/style.css}" />
+</head>
+<body>
+
+<div th:replace="~{fragments/navigation-bar :: navigation-bar(
+        ~{fragments/navigation-bar :: empty},
+        'Khitto Menu',
+        ~{fragments/navigation-bar :: empty})}">
+</div>
+
+<div class="page">
+  <div id="gameList"
+       th:insert="~{fragments/gameList :: gameList(games=${games})}">
+  </div>
+</div>
+
+<script th:src="@{/menu.js}"></script>
+
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Question</title>
+  <link rel="stylesheet" th:href="@{/style.css}" />
+  <script defer th:src="@{/question.js}"></script>
+</head>
+<body>
+
+<div th:replace="~{fragments/navigation-bar :: navigation-bar(
+        ~{fragments/navigation-bar-elements :: back-to-menu},
+        'Question',
+        ~{fragments/navigation-bar-elements :: game-next})}">
+</div>
+
+<div class="page">
+  <h2 th:text="${question.content}">Question text…</h2>
+
+  <div id="answers">
+    <div th:each="answer : ${answers}"
+         class="answer-box"
+         th:attr="data-id=${answer.id}, data-correct=${answer.id}==${question.correctAnswerId}?true:false">
+      <span th:text="${answer.content}">Answer</span>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
