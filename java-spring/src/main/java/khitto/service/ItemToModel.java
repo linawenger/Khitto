@@ -36,7 +36,7 @@ public final class ItemToModel {
     public static Game game(DittoQueryResultItem item) {
         var value = item.getValue();
 
-        int id         = getInt(value, "id");
+        String id         = getString(value, "id");
         String name    = getString(value, "name");
         int status     = getInt(value, "status");
         boolean finished = getBool(value, "finished");
@@ -49,7 +49,7 @@ public final class ItemToModel {
         var value = item.getValue();
 
         int id      = getInt(value, "id");
-        int gameId  = getInt(value, "gameId");
+        String gameId  = getString(value, "gameId");
         String text = getString(value, "content");
         int correct = getInt(value, "correctAnswerId");
 

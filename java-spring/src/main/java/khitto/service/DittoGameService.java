@@ -28,7 +28,7 @@ public class DittoGameService {
                                 .toList();
     }
 
-    public Optional<Game> findById(int id) {
+    public Optional<Game> findById(String id) {
         final String query = "SELECT * FROM %s WHERE id = :id".formatted(GAMES_COLLECTION_NAME);
         Ditto ditto = dittoService.getDitto();
 
@@ -86,18 +86,15 @@ public class DittoGameService {
         closeQuietly(insertResult);
     }
 
-    public void delete(int id) {
+    public void delete(String id) {
         findById(id).ifPresent(game -> {
             game.setDeleted(true);
             save(game);
         });
     }
 
-    public int getNextId() {
-        return loadAllGamesRaw().stream()
-                                .mapToInt(Game::getId)
-                                .max()
-                                .orElse(0) + 1;
+    public String getUUID() {
+        return UUID.randomUUID().toString();
     }
 
     private List<Game> loadAllGamesRaw() {

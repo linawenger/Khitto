@@ -31,7 +31,7 @@ public class DittoQuestionService {
         } catch (DittoError ignored) {}
     }
 
-    public List<khitto.model.Question> findByGameId(int gameId) {
+    public List<khitto.model.Question> findByGameId(String gameId) {
         Ditto ditto = dittoService.getDitto();
         DittoQueryResult result = ditto.getStore()
                                        .execute(
@@ -82,7 +82,7 @@ public class DittoQuestionService {
         }
     }
 
-    public void deleteByGameId(int gameId) {
+    public void deleteByGameId(String gameId) {
         Ditto ditto = dittoService.getDitto();
         DittoQueryResult result = ditto.getStore()
                                        .execute(

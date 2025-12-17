@@ -20,7 +20,7 @@ public class MakerController extends BaseGameController {
     }
 
     @GetMapping("/maker/{id}")
-    public String maker(@PathVariable int id, Model model) {
+    public String maker(@PathVariable String id, Model model) {
         Game game = gameRepo.findById(id).orElseThrow();
 
         if (game.isFinished()) {
@@ -62,7 +62,7 @@ public class MakerController extends BaseGameController {
     }
 
     @PostMapping("/maker/{id}/publish")
-    public String publish(@PathVariable int id,
+    public String publish(@PathVariable String id,
                           @RequestParam String name,
                           @RequestParam(value = "q[]", required = false) List<String> questions,
                           @RequestParam(value = "a1[]", required = false) List<String> a1,
@@ -135,7 +135,7 @@ public class MakerController extends BaseGameController {
     }
 
     @PostMapping("/maker/{id}/cancel")
-    public String cancel(@PathVariable int id) {
+    public String cancel(@PathVariable String id) {
         Game game = gameRepo.findById(id).orElseThrow();
 
         boolean hasQuestions = !questionRepo.findByGameId(id).isEmpty();

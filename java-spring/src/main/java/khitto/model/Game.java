@@ -1,17 +1,17 @@
 package khitto.model;
 
 public class Game {
-    private int id;
+    private String id;
     private String name;
     private int status;
     private boolean finished;
     private boolean deleted;
 
-    public Game(int id, String name, int status, boolean finished) {
+    public Game(String id, String name, int status, boolean finished) {
         this(id, name, status, finished, false);
     }
 
-    public Game(int id, String name, int status, boolean finished, boolean deleted) {
+    public Game(String id, String name, int status, boolean finished, boolean deleted) {
         this.id = id;
         this.name = name;
         this.status = status;
@@ -21,8 +21,8 @@ public class Game {
 
     public Game() {}
 
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }

@@ -23,7 +23,7 @@ public class GamePlayController extends BaseGameController {
     }
 
     @GetMapping("/games/{id}")
-    public String play(@PathVariable int id) {
+    public String play(@PathVariable String id) {
         Game game = gameRepo.findById(id).orElseThrow();
 
         if (!game.isFinished()) {return redirectToHome();}
@@ -56,7 +56,7 @@ public class GamePlayController extends BaseGameController {
     }
 
     @GetMapping("/games/{id}/start")
-    public String start(@PathVariable int id, Model model) {
+    public String start(@PathVariable String id, Model model) {
         Game game = gameRepo.findById(id).orElseThrow();
 
         if (!game.isFinished()) {return redirectToHome();}
@@ -66,7 +66,7 @@ public class GamePlayController extends BaseGameController {
     }
 
     @PostMapping("/games/{id}/start")
-    public String startGame(@PathVariable int id) {
+    public String startGame(@PathVariable String id) {
         Game game = gameRepo.findById(id).orElseThrow();
 
         if (!game.isFinished()) {return redirectToHome();}
@@ -77,7 +77,7 @@ public class GamePlayController extends BaseGameController {
     }
 
     @GetMapping("/games/{id}/question/{status}")
-    public String question(@PathVariable int id,
+    public String question(@PathVariable String id,
                            @PathVariable int status,
                            Model model) {
         Game game = gameRepo.findById(id).orElseThrow();
@@ -105,7 +105,7 @@ public class GamePlayController extends BaseGameController {
     }
 
     @PostMapping("/games/{id}/next")
-    public String next(@PathVariable int id) {
+    public String next(@PathVariable String id) {
         Game game = gameRepo.findById(id).orElseThrow();
 
         if (!game.isFinished()) {return redirectToHome();}
@@ -116,7 +116,7 @@ public class GamePlayController extends BaseGameController {
     }
 
     @GetMapping("/games/{id}/result/{status}")
-    public String result(@PathVariable int id,
+    public String result(@PathVariable String id,
                          @PathVariable int status,
                          Model model) {
         Game game = gameRepo.findById(id).orElseThrow();

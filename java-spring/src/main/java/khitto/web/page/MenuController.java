@@ -29,14 +29,14 @@ public class MenuController extends BaseGameController {
 
     @PostMapping("/games/new")
     public String newGame() {
-        int id = gameRepo.getNextId();
+        String id = gameRepo.getUUID();
         Game g = new Game(id, "", 0, false);
         gameRepo.save(g);
         return "redirect:/maker/" + id;
     }
 
     @PostMapping("/games/{id}/delete")
-    public String deleteGame(@PathVariable int id) {
+    public String deleteGame(@PathVariable String id) {
         gameRepo.delete(id);
         return "redirect:/";
     }
