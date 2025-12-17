@@ -35,7 +35,7 @@ public class MakerController extends BaseGameController {
             List<Answer> answers = answerRepo.findByQuestionId(q.getId());
             answers.sort(Comparator.comparingInt(Answer::getId));
 
-            String a1 = answers.size() > 0 ? answers.get(0).getContent() : "";
+            String a1 = !answers.isEmpty() ? answers.get(0).getContent() : "";
             String a2 = answers.size() > 1 ? answers.get(1).getContent() : "";
             String a3 = answers.size() > 2 ? answers.get(2).getContent() : "";
             String a4 = answers.size() > 3 ? answers.get(3).getContent() : "";

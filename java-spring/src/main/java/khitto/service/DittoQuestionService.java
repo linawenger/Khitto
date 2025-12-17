@@ -9,21 +9,16 @@ import com.ditto.java.Ditto;
 import com.ditto.java.DittoError;
 import com.ditto.java.DittoQueryResult;
 import com.ditto.java.serialization.DittoCborSerializable;
-import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Flux;
 
 @Component
 public class DittoQuestionService {
 
     private static final String QUESTIONS_COLLECTION_NAME = "questions";
     private final DittoService dittoService;
-    private final DittoObservationService observationService;
 
-    public DittoQuestionService(DittoService dittoService,
-                                DittoObservationService observationService) {
+    public DittoQuestionService(DittoService dittoService) {
         this.dittoService = dittoService;
-        this.observationService = observationService;
 
         Ditto ditto = dittoService.getDitto();
         try {

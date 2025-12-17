@@ -1,10 +1,10 @@
 package khitto.model;
 
 public class Question {
-    private int id;
-    private String gameId;
-    private String content;
-    private int correctAnswerId;
+    private final int id;
+    private final String gameId;
+    private final String content;
+    private final int correctAnswerId;
 
     public Question(int id, String gameId, String content, int correctAnswerId) {
         this.id = id;
