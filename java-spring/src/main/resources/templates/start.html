@@ -15,9 +15,27 @@
 
 <div class="page center-screen">
   <div class="box">
-    <h2>You want to start this game?</h2>
-    <form th:action="@{/games/{id}/start(id=${game.id})}" method="post" style="margin-top:16px;">
-      <button class="button button-large" type="submit">Start!</button>
+    <h2 th:text="'You want to start this game?'">
+      You want to start this game?
+    </h2>
+
+    <form th:action="@{/games/{id}/start(id=${game.id})}"
+          method="post"
+          style="margin-top:16px;">
+
+      <div style="margin-bottom:16px; text-align:left;">
+        <label for="instanceLabel">
+          Please add a unique identifier to specifiy your game!
+        </label>
+        <input id="instanceLabel"
+               name="instanceLabel"
+               class="input"
+               placeholder="name of your group" />
+      </div>
+
+      <button class="button button-large" type="submit">
+        Start!
+      </button>
     </form>
   </div>
 </div>

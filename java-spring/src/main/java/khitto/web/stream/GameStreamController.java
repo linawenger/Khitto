@@ -1,7 +1,7 @@
 package khitto.web.stream;
 
 import java.util.List;
-
+import java.util.stream.Collectors;
 import khitto.model.Game;
 import khitto.service.GameObservationService;
 import org.springframework.http.MediaType;
@@ -40,8 +40,17 @@ public class GameStreamController {
     }
 
     private String renderGamesFragment(List<Game> games) {
+        List<Game> templates = games.stream()
+                                    .filter(g -> g.getStatus() == 0)
+                                    .collect(Collectors.toList());
+
+        List<Game> activeGames = games.stream()
+                                      .filter(g -> g.getStatus() != 0)
+                                      .collect(Collectors.toList());
+
         Context ctx = new Context();
-        ctx.setVariable("games", games);
+        ctx.setVariable("templates", templates);
+        ctx.setVariable("activeGames", activeGames);
         return templateEngine.process("fragments/gameList", ctx);
     }
 }

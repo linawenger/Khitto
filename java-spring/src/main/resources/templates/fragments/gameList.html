@@ -3,10 +3,11 @@
 <body>
 
 <div id="game_list"
-     th:fragment="gameList (games)">
+     th:fragment="gameList (templates, activeGames)">
 
+    <h3>Templates</h3>
     <div class="grid-games">
-        <div th:each="game : ${games}"
+        <div th:each="game : ${templates}"
              th:class="'game-card' + (${game.finished} ? '' : ' game-card-editing')"
              style="display:flex; flex-direction:column; gap:6px;">
 
@@ -24,8 +25,8 @@
                 <span style="font-size:0.8rem;">currently being edited…</span>
             </div>
 
-            <div th:if="${game.finished}"
-                 class="game-card-actions"
+            <div class="game-card-actions"
+                 th:if="${game.finished}"
                  style="display:flex; gap:6px; justify-content:space-between;">
 
                 <a th:href="'/maker/' + ${game.id}"
@@ -53,6 +54,28 @@
                 + New Game
             </button>
         </form>
+    </div>
+
+    <h3 th:if="${#lists.size(activeGames) > 0}" style="margin-top:24px;">Active games</h3>
+    <div class="grid-games" th:if="${#lists.size(activeGames) > 0}">
+        <div th:each="game : ${activeGames}"
+             class="game-card"
+             style="display:flex; flex-direction:column; gap:6px;">
+
+            <a th:href="'/games/' + ${game.id}"
+               class="game-card-link"
+               style="flex:1; display:flex; align-items:center; justify-content:center;">
+                <span th:text="${game.name}">Game</span>
+            </a>
+
+            <div class="game-card-actions"
+                 style="display:flex; gap:6px; justify-content:flex-end;">
+                <form th:action="'/games/' + ${game.id} + '/delete'"
+                      method="post"
+                      style="flex:1;">
+                </form>
+            </div>
+        </div>
     </div>
 
 </div>

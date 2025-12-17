@@ -14,7 +14,7 @@
 
 <div class="page">
   <div id="gameList"
-       th:insert="~{fragments/gameList :: gameList(games=${games})}">
+       th:insert="~{fragments/gameList :: gameList(templates=${templates}, activeGames=${activeGames})}">
   </div>
 </div>
 

@@ -35,7 +35,7 @@ public class DittoGameService {
         DittoQueryResult result = ditto.getStore()
                                        .execute(query,
                                                DittoCborSerializable.Dictionary.buildDictionary()
-                                                                               .put("id", String.valueOf(id))
+                                                                               .put("id", id)
                                                                                .build())
                                        .toCompletableFuture()
                                        .join();
@@ -52,12 +52,11 @@ public class DittoGameService {
     public void save(Game game) {
         Ditto ditto = dittoService.getDitto();
 
-        // Alte Version (falls vorhanden) löschen
         DittoQueryResult deleteResult = ditto.getStore()
                                              .execute(
                                                      "DELETE FROM %s WHERE id = :id".formatted(GAMES_COLLECTION_NAME),
                                                      DittoCborSerializable.Dictionary.buildDictionary()
-                                                                                     .put("id", String.valueOf(game.getId()))
+                                                                                     .put("id", game.getId())
                                                                                      .build()
                                              )
                                              .toCompletableFuture()
@@ -67,7 +66,7 @@ public class DittoGameService {
         DittoCborSerializable.Dictionary gameDoc =
                 DittoCborSerializable.Dictionary.buildDictionary()
                                                 .put("_id", UUID.randomUUID().toString())
-                                                .put("id", String.valueOf(game.getId()))
+                                                .put("id", game.getId())
                                                 .put("name", game.getName())
                                                 .put("status", String.valueOf(game.getStatus()))
                                                 .put("finished", String.valueOf(game.isFinished()))

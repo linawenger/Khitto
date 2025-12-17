@@ -43,7 +43,7 @@ public class GamePlayController extends BaseGameController {
         int maxScreens = questionScreens * 2;
 
         if (status > maxScreens) {
-            game.setStatus(0);
+            game.setDeleted(true);
             gameRepo.save(game);
             return redirectToHome();
         }
@@ -59,17 +59,27 @@ public class GamePlayController extends BaseGameController {
     public String start(@PathVariable String id, Model model) {
         Game game = gameRepo.findById(id).orElseThrow();
 
-        if (!game.isFinished()) {return redirectToHome();}
+        if (!game.isFinished() || game.getStatus() != 0) {return redirectToHome();}
 
         model.addAttribute("game", game);
         return "start";
     }
 
     @PostMapping("/games/{id}/start")
-    public String startGame(@PathVariable String id) {
+    public String startGame(@PathVariable String id,
+                            @RequestParam(name = "instanceLabel", required = false) String instanceLabel) {
+
         Game game = gameRepo.findById(id).orElseThrow();
 
-        if (!game.isFinished()) {return redirectToHome();}
+        if (!game.isFinished()) {
+            return redirectToHome();
+        }
+
+        if (instanceLabel != null && !instanceLabel.isBlank()) {
+            String trimmed = instanceLabel.trim();
+            String newName = game.getName() + " - " + trimmed;
+            game.setName(newName);
+        }
 
         game.setStatus(1);
         gameRepo.save(game);
@@ -82,7 +92,7 @@ public class GamePlayController extends BaseGameController {
                            Model model) {
         Game game = gameRepo.findById(id).orElseThrow();
 
-        if (!game.isFinished()) {return redirectToHome();}
+        if (!game.isFinished() || game.getStatus() == 0) {return redirectToHome();}
 
         List<Question> questions = questionRepo.findByGameId(id)
                                                .stream()
@@ -108,7 +118,7 @@ public class GamePlayController extends BaseGameController {
     public String next(@PathVariable String id) {
         Game game = gameRepo.findById(id).orElseThrow();
 
-        if (!game.isFinished()) {return redirectToHome();}
+        if (!game.isFinished() || game.getStatus() == 0) {return redirectToHome();}
 
         game.setStatus(game.getStatus() + 1);
         gameRepo.save(game);
@@ -121,7 +131,7 @@ public class GamePlayController extends BaseGameController {
                          Model model) {
         Game game = gameRepo.findById(id).orElseThrow();
 
-        if (!game.isFinished()) {return redirectToHome();}
+        if (!game.isFinished() || game.getStatus() == 0) {return redirectToHome();}
 
         model.addAttribute("game", game);
         return "result";

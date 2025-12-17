@@ -1,6 +1,7 @@
 package khitto.web.page;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import khitto.model.Game;
 import khitto.service.DittoAnswerService;
 import khitto.service.DittoGameService;
@@ -22,8 +23,18 @@ public class MenuController extends BaseGameController {
 
     @GetMapping("/")
     public String menu(Model model) {
-        List<Game> games = gameRepo.findAll();
-        model.addAttribute("games", games);
+        List<Game> all = gameRepo.findAll();
+
+        List<Game> templates = all.stream()
+                                  .filter(g -> g.getStatus() == 0)
+                                  .collect(Collectors.toList());
+
+        List<Game> activeGames = all.stream()
+                                    .filter(g -> g.getStatus() != 0)
+                                    .collect(Collectors.toList());
+
+        model.addAttribute("templates", templates);
+        model.addAttribute("activeGames", activeGames);
         return "menu";
     }
 

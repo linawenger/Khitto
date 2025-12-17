@@ -8,8 +8,7 @@ import khitto.model.Answer;
 
 public final class ItemToModel {
 
-    private ItemToModel() {
-    }
+    private ItemToModel() {}
 
     private static String getString(DittoCborSerializable.Dictionary value,
                                     String key) {
@@ -36,9 +35,9 @@ public final class ItemToModel {
     public static Game game(DittoQueryResultItem item) {
         var value = item.getValue();
 
-        String id         = getString(value, "id");
-        String name    = getString(value, "name");
-        int status     = getInt(value, "status");
+        String id        = getString(value, "id");
+        String name      = getString(value, "name");
+        int status       = getInt(value, "status");
         boolean finished = getBool(value, "finished");
         boolean deleted  = getBool(value, "deleted");
 
@@ -48,10 +47,10 @@ public final class ItemToModel {
     public static Question question(DittoQueryResultItem item) {
         var value = item.getValue();
 
-        int id      = getInt(value, "id");
+        int id         = getInt(value, "id");
         String gameId  = getString(value, "gameId");
-        String text = getString(value, "content");
-        int correct = getInt(value, "correctAnswerId");
+        String text    = getString(value, "content");
+        int correct    = getInt(value, "correctAnswerId");
 
         return new Question(id, gameId, text, correct);
     }
