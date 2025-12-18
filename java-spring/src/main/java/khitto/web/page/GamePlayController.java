@@ -12,10 +12,14 @@ import java.util.List;
 @Controller
 public class GamePlayController extends BaseGameController {
 
+    private final GameInstanceService gameInstanceService;
+
     public GamePlayController(DittoGameService gameRepo,
                               DittoQuestionService questionRepo,
-                              DittoAnswerService answerRepo) {
+                              DittoAnswerService answerRepo,
+                              GameInstanceService gameInstanceService) {
         super(gameRepo, questionRepo, answerRepo);
+        this.gameInstanceService = gameInstanceService;
     }
 
     private String redirectToHome() {
@@ -69,21 +73,9 @@ public class GamePlayController extends BaseGameController {
     public String startGame(@PathVariable String id,
                             @RequestParam(name = "instanceLabel", required = false) String instanceLabel) {
 
-        Game game = gameRepo.findById(id).orElseThrow();
+        Game instance = gameInstanceService.createInstanceFromTemplate(id, instanceLabel);
 
-        if (!game.isFinished()) {
-            return redirectToHome();
-        }
-
-        if (instanceLabel != null && !instanceLabel.isBlank()) {
-            String trimmed = instanceLabel.trim();
-            String newName = game.getName() + " - " + trimmed;
-            game.setName(newName);
-        }
-
-        game.setStatus(1);
-        gameRepo.save(game);
-        return "redirect:/games/" + id;
+        return "redirect:/games/" + instance.getId();
     }
 
     @GetMapping("/games/{id}/question/{status}")

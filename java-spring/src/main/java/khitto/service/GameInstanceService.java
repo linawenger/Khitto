@@ -56,28 +56,28 @@ public class GameInstanceService {
             int newQuestionId = nextQuestionId;
             nextQuestionId += 2;
 
-            List<Answer> oldAnswers = answerRepo.findByQuestionId(oldQ.getId())
-                                                .stream()
-                                                .sorted(Comparator.comparingInt(Answer::getId))
-                                                .toList();
+            Question newQ = new Question(
+                    newQuestionId,
+                    instance.getId(),
+                    oldQ.getContent(),
+                    oldQ.getCorrectAnswerId()         // wird gleich durch neue Answer-IDs ersetzt
+            );
+            newQuestions.add(newQ);
 
-            int baseAnswerId = answerRepo.getNextId();
-            int correctAnswerId = -1;
-
-            for (int i = 0; i < oldAnswers.size(); i++) {
-                Answer oldA = oldAnswers.get(i);
-                int newAnswerId = baseAnswerId + i;
-
-                Answer newA = new Answer(newAnswerId, newQuestionId, oldA.getContent());
+            List<Answer> oldAnswers = answerRepo.findByQuestionId(oldQ.getId());
+            for (Answer oldA : oldAnswers) {
+                int newAnswerId = answerRepo.getNextId();
+                Answer newA = new Answer(
+                        newAnswerId,
+                        newQuestionId,
+                        oldA.getContent()
+                );
                 newAnswers.add(newA);
 
                 if (oldA.getId() == oldQ.getCorrectAnswerId()) {
-                    correctAnswerId = newAnswerId;
+                    newQ.setCorrectAnswerId(newAnswerId);
                 }
             }
-
-            Question newQ = new Question(newQuestionId, instanceId, oldQ.getContent(), correctAnswerId);
-            newQuestions.add(newQ);
         }
         questionRepo.saveAll(newQuestions);
         if (!newAnswers.isEmpty()) {
