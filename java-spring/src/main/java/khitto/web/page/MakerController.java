@@ -56,7 +56,7 @@ public class MakerController extends BaseGameController {
         }
 
         model.addAttribute("game", game);
-        model.addAttribute("existingQuestions", existing); // kann auch leer sein
+        model.addAttribute("existingQuestions", existing);
 
         return "maker/maker";
     }

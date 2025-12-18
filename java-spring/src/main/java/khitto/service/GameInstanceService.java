@@ -60,7 +60,7 @@ public class GameInstanceService {
                     newQuestionId,
                     instance.getId(),
                     oldQ.getContent(),
-                    oldQ.getCorrectAnswerId()         // wird gleich durch neue Answer-IDs ersetzt
+                    oldQ.getCorrectAnswerId()
             );
             newQuestions.add(newQ);
 

@@ -1,5 +1,3 @@
-// question.js
-
 let answerAlreadySelected = false;
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -24,7 +22,6 @@ function selectAnswer(answerElement) {
     } else {
         answerElement.classList.add('wrong');
 
-        // richtige Antwort markieren
         document.querySelectorAll('#answers .answer-box').forEach(function (box) {
             if (box.dataset.correct === 'true') {
                 box.classList.add('correct');
