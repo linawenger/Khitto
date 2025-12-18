@@ -30,6 +30,7 @@ public class DittoAnswerService {
                                                                                         .put("_id", UUID.randomUUID().toString())
                                                                                         .put("content", content)
                                                                                         .put("answer", answer)
+                                                                                        .put("count", 0)
                                                                                         .build())
                                                 .build()
         ).toCompletableFuture().join();
@@ -95,7 +96,8 @@ public class DittoAnswerService {
         return new Answer(
                 value.get("_id").getString(),
                 value.get("content").getString(),
-                value.get("answer").getString()
+                value.get("answer").getString(),
+                value.get("count").getInt()
         );
     }
 }

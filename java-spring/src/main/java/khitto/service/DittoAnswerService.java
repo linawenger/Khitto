@@ -70,6 +70,7 @@ public class DittoAnswerService {
                                                                                                                            .put("id", String.valueOf(a.getId()))
                                                                                                                            .put("questionId", String.valueOf(a.getQuestionId()))
                                                                                                                            .put("content", a.getContent())
+                                                                                                                           .put("count", a.getCount())
                                                                                                                            .build())
                                                                                    .build())
                                            .toCompletableFuture()

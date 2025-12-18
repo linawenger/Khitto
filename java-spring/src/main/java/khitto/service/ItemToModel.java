@@ -61,7 +61,8 @@ public final class ItemToModel {
         int id         = getInt(value, "id");
         int questionId = getInt(value, "questionId");
         String text    = getString(value, "content");
+        int count    = getInt(value, "count");
 
-        return new Answer(id, questionId, text);
+        return new Answer(id, questionId, text, count);
     }
 }

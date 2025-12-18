@@ -70,7 +70,8 @@ public class GameInstanceService {
                 Answer newA = new Answer(
                         newAnswerId,
                         newQuestionId,
-                        oldA.getContent()
+                        oldA.getContent(),
+                        0
                 );
                 newAnswers.add(newA);
 

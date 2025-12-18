@@ -112,7 +112,7 @@ public class MakerController extends BaseGameController {
             int correctAnswerId = -1;
             for (int j = 0; j < 4; j++) {
                 int thisAnswerId = baseAnswerId + j;
-                Answer ans = new Answer(thisAnswerId, qId, answerTexts.get(j));
+                Answer ans = new Answer(thisAnswerId, qId, answerTexts.get(j),0);
                 newAnswers.add(ans);
                 if (j + 1 == correctIndex) {
                     correctAnswerId = thisAnswerId;
