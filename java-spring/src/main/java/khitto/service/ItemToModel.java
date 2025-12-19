@@ -19,6 +19,7 @@ public final class ItemToModel {
     private static int getInt(DittoCborSerializable.Dictionary value,
                               String key) {
         var v = value.get(key);
+
         try {
             return Integer.parseInt(v.getString());
         } catch (Exception e) {

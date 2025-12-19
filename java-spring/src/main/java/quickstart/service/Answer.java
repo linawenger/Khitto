@@ -6,5 +6,5 @@ public record Answer(
         @Nonnull String aid,
         @Nonnull String content,
         @Nonnull String answer,
-        int count
+        @Nonnull String count
 ) { }
