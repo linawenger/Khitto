@@ -15,6 +15,12 @@ function selectAnswer(answerElement) {
     }
     answerAlreadySelected = true;
 
+    const uid = answerElement.dataset.uid; // Ditto UID
+
+    fetch(`/answers/${uid}/count`, {
+        method: 'POST'
+    });
+
     const isCorrect = answerElement.dataset.correct === 'true';
 
     if (isCorrect) {

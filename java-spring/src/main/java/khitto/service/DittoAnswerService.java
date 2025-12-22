@@ -114,4 +114,57 @@ public class DittoAnswerService {
         try {result.close();}
         catch (IOException ignored) {}
     }
+
+    //------------------------------------------------------- count handling
+
+    // extracts count from DB for a spesific uid
+    public String getCountByUid(String uid) {
+        Ditto ditto = dittoService.getDitto();
+
+        DittoQueryResult result = ditto.getStore()
+                                       .execute(
+                                               "SELECT count FROM %s WHERE _id = :uid"
+                                                       .formatted(ANSWERS_COLLECTION_NAME),
+                                               DittoCborSerializable.Dictionary.buildDictionary()
+                                                                               .put("uid", uid)
+                                                                               .build()
+                                       )
+                                       .toCompletableFuture()
+                                       .join();
+
+        try {
+            var item  = result.getItems().get(0);
+            var value = item.getValue();
+            return ItemToModel.getString(value, "count");
+        } finally {
+            closeQuietly(result);
+        }
+    }
+
+    //updates count attribute for a uid
+    public void updateCountByUid(String uid, int newCount) {
+        Ditto ditto = dittoService.getDitto();
+
+        DittoQueryResult result = ditto.getStore()
+                                       .execute(
+                                               "UPDATE %s SET count = :count WHERE _id = :uid"
+                                                       .formatted(ANSWERS_COLLECTION_NAME),
+                                               DittoCborSerializable.Dictionary.buildDictionary()
+                                                                               .put("uid", uid)
+                                                                               .put("count", String.valueOf(newCount))
+                                                                               .build()
+                                       )
+                                       .toCompletableFuture()
+                                       .join();
+
+        closeQuietly(result);
+    }
+
+    //handles incrementing the count field of a given uid
+    public void incrementCount(String uid) {
+        String countOld = getCountByUid(uid);
+        int count = Integer.parseInt(countOld);
+        count++;
+        updateCountByUid(uid, count);
+    }
 }

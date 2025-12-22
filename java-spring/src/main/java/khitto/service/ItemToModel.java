@@ -10,7 +10,7 @@ public final class ItemToModel {
 
     private ItemToModel() {}
 
-    private static String getString(DittoCborSerializable.Dictionary value,
+    public static String getString(DittoCborSerializable.Dictionary value,
                                     String key) {
         var v = value.get(key);
         return v.getString();
