@@ -59,11 +59,11 @@ public final class ItemToModel {
     public static Answer answer(DittoQueryResultItem item) {
         var value = item.getValue();
 
+        String uid = getString(value, "uid");
         int id         = getInt(value, "id");
         int questionId = getInt(value, "questionId");
         String text    = getString(value, "content");
         int count    = getInt(value, "count");
-
-        return new Answer(id, questionId, text, count);
+        return new Answer(uid, id, questionId, text, count);
     }
 }

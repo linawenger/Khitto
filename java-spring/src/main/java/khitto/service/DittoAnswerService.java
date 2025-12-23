@@ -66,7 +66,7 @@ public class DittoAnswerService {
                                                    DittoCborSerializable.Dictionary.buildDictionary()
                                                                                    .put("newAnswer",
                                                                                            DittoCborSerializable.Dictionary.buildDictionary()
-                                                                                                                           .put("_id", UUID.randomUUID().toString())
+                                                                                                                           .put("uid", a.getUid())
                                                                                                                            .put("id", String.valueOf(a.getId()))
                                                                                                                            .put("questionId", String.valueOf(a.getQuestionId()))
                                                                                                                            .put("content", a.getContent())
@@ -123,7 +123,7 @@ public class DittoAnswerService {
 
         DittoQueryResult result = ditto.getStore()
                                        .execute(
-                                               "SELECT count FROM %s WHERE _id = :uid"
+                                               "SELECT * FROM %s WHERE uid = :uid"
                                                        .formatted(ANSWERS_COLLECTION_NAME),
                                                DittoCborSerializable.Dictionary.buildDictionary()
                                                                                .put("uid", uid)
@@ -147,7 +147,7 @@ public class DittoAnswerService {
 
         DittoQueryResult result = ditto.getStore()
                                        .execute(
-                                               "UPDATE %s SET count = :count WHERE _id = :uid"
+                                               "UPDATE %s SET count = :count WHERE uid = :uid"
                                                        .formatted(ANSWERS_COLLECTION_NAME),
                                                DittoCborSerializable.Dictionary.buildDictionary()
                                                                                .put("uid", uid)
@@ -167,4 +167,6 @@ public class DittoAnswerService {
         count++;
         updateCountByUid(uid, count);
     }
+
+    //TODO: handle race condition
 }

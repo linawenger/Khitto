@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class GameInstanceService {
@@ -67,7 +68,9 @@ public class GameInstanceService {
             List<Answer> oldAnswers = answerRepo.findByQuestionId(oldQ.getId());
             for (Answer oldA : oldAnswers) {
                 int newAnswerId = answerRepo.getNextId();
+                String newUid = UUID.randomUUID().toString();
                 Answer newA = new Answer(
+                        newUid,
                         newAnswerId,
                         newQuestionId,
                         oldA.getContent(),

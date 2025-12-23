@@ -19,7 +19,7 @@
   <div id="answers">
     <div th:each="answer : ${answers}"
          class="answer-box"
-         th:attr="data-id=${answer.id}, data-correct=${answer.id}==${question.correctAnswerId}?true:false">
+         th:attr="data-uid=${answer.uid}, data-correct=${answer.id}==${question.correctAnswerId}?true:false">
       <span th:text="${answer.content}">Answer</span>
     </div>
   </div>

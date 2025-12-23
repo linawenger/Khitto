@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
 @Controller
 public class MakerController extends BaseGameController {
@@ -112,7 +113,8 @@ public class MakerController extends BaseGameController {
             int correctAnswerId = -1;
             for (int j = 0; j < 4; j++) {
                 int thisAnswerId = baseAnswerId + j;
-                Answer ans = new Answer(thisAnswerId, qId, answerTexts.get(j),0);
+                String thisUid = UUID.randomUUID().toString();
+                Answer ans = new Answer(thisUid, thisAnswerId, qId, answerTexts.get(j),0);
                 newAnswers.add(ans);
                 if (j + 1 == correctIndex) {
                     correctAnswerId = thisAnswerId;

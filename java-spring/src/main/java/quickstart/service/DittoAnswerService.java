@@ -94,6 +94,7 @@ public class DittoAnswerService {
     private Answer itemToAnswer(@Nonnull DittoQueryResultItem item) {
         var value = item.getValue();
         return new Answer(
+                value.get("uid").getString(),
                 value.get("_id").getString(),
                 value.get("content").getString(),
                 value.get("answer").getString(),
