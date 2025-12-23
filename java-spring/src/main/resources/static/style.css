@@ -126,8 +126,8 @@ body {
 }
 
 .answer-box.correct {
-    background: #d6f5d6;
-    border-color: #9bd89b;
+    background: #87cefa;
+    border-color: #4169e1;
 }
 
 .answer-box.wrong {
