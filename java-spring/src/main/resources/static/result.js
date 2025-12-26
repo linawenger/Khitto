@@ -23,3 +23,5 @@ function render(content, count) {
     li.textContent = `${content}: ${count}`;
     ul.appendChild(li);
 }
+
+

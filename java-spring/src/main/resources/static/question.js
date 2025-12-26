@@ -35,3 +35,13 @@ function selectAnswer(answerElement) {
         });
     }
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    const nextButton = document.querySelector(".navigation-right");
+
+    if (nextButton) {
+        setTimeout(() => {
+            nextButton.style.visibility = "visible";
+        }, 1000); // 1 Sekunden noch ANPASSEN
+    }
+});

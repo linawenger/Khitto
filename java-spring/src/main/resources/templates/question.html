@@ -12,6 +12,11 @@
         'Question',
         ~{fragments/navigation-bar-elements :: game-next})}">
 </div>
+<style>
+  .navigation-right {
+    visibility: hidden;
+  }
+</style>
 
 <div class="page">
   <h2 th:text="${question.content}">Question text…</h2>
