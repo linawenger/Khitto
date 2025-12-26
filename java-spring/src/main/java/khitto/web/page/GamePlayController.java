@@ -121,11 +121,31 @@ public class GamePlayController extends BaseGameController {
     public String result(@PathVariable String id,
                          @PathVariable int status,
                          Model model) {
+
         Game game = gameRepo.findById(id).orElseThrow();
 
-        if (!game.isFinished() || game.getStatus() == 0) {return redirectToHome();}
+        if (!game.isFinished() || game.getStatus() == 0) {
+            return redirectToHome();
+        }
+
+        List<Question> questions = questionRepo.findByGameId(id)
+                                               .stream()
+                                               .sorted(Comparator.comparingInt(Question::getId))
+                                               .toList();
+
+        int index = status / 2 - 1;
+
+        if (index < 0 || index >= questions.size()) {
+            return "redirect:/games/" + id;
+        }
+
+        Question q = questions.get(index);
+        List<Answer> answers = answerRepo.findByQuestionId(q.getId());
 
         model.addAttribute("game", game);
+        model.addAttribute("answers", answers);
+
         return "result";
     }
+
 }

@@ -12,9 +12,21 @@
         ~{fragments/navigation-bar-elements :: game-next})}">
 </div>
 
+<ul id="answersData" style="display:none;">
+  <li th:each="a : ${answers}"
+      class="answerData"
+      th:data-uid="${a.uid}"
+      th:data-content="${a.content}">
+  </li>
+</ul>
+
 <div class="page center-screen">
   <div class="box">
-    <p>Result screen placeholder.</p>
+    <h2>Result</h2>
+    <ul id="resultList"></ul>
+
+<script src="/result.js"></script>
+
   </div>
 </div>
 
