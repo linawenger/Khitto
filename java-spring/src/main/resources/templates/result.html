@@ -16,7 +16,8 @@
   <li th:each="a : ${answers}"
       class="answerData"
       th:data-uid="${a.uid}"
-      th:data-content="${a.content}">
+      th:data-content="${a.content}"
+      th:data-count="${a.count}">
   </li>
 </ul>
 
