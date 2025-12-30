@@ -68,7 +68,7 @@ public class DittoQuestionService {
                                                                                                                            .put("id", String.valueOf(q.getId()))
                                                                                                                            .put("gameId", String.valueOf(q.getGameId()))
                                                                                                                            .put("content", q.getContent())
-                                                                                                                           .put("correctAnswerId", String.valueOf(q.getCorrectAnswerId()))
+                                                                                                                           .put("correctAnswerUid", String.valueOf(q.getCorrectAnswerUid()))
                                                                                                                            .build())
                                                                                    .build())
                                            .toCompletableFuture()

@@ -6,10 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Controller
 public class MakerController extends BaseGameController {
@@ -34,7 +31,7 @@ public class MakerController extends BaseGameController {
 
         for (Question q : questions) {
             List<Answer> answers = answerRepo.findByQuestionId(q.getId());
-            answers.sort(Comparator.comparingInt(Answer::getId));
+            answers.sort(Comparator.comparing(Answer::getUid));
 
             String a1 = !answers.isEmpty() ? answers.get(0).getContent() : "";
             String a2 = answers.size() > 1 ? answers.get(1).getContent() : "";
@@ -43,7 +40,7 @@ public class MakerController extends BaseGameController {
 
             int correctIndex = 1;
             for (int i = 0; i < answers.size() && i < 4; i++) {
-                if (answers.get(i).getId() == q.getCorrectAnswerId()) {
+                if (Objects.equals(answers.get(i).getUid(), q.getCorrectAnswerUid())) {
                     correctIndex = i + 1;
                     break;
                 }
@@ -101,28 +98,31 @@ public class MakerController extends BaseGameController {
                 continue;
             }
 
-            String ans1 = (a1Safe.size() > i) ? a1Safe.get(i) : "";
-            String ans2 = (a2Safe.size() > i) ? a2Safe.get(i) : "";
-            String ans3 = (a3Safe.size() > i) ? a3Safe.get(i) : "";
-            String ans4 = (a4Safe.size() > i) ? a4Safe.get(i) : "";
+            List<String> answerTexts = List.of(
+                    a1Safe.size() > i ? a1Safe.get(i) : "",
+                    a2Safe.size() > i ? a2Safe.get(i) : "",
+                    a3Safe.size() > i ? a3Safe.get(i) : "",
+                    a4Safe.size() > i ? a4Safe.get(i) : ""
+            );
 
             int correctIndex = (correctSafe.size() > i) ? correctSafe.get(i) : 1;
 
-            int baseAnswerId = answerRepo.getNextId();
-            List<String> answerTexts = List.of(ans1, ans2, ans3, ans4);
-            int correctAnswerId = -1;
+            List<String> answerUids = new ArrayList<>();
             for (int j = 0; j < 4; j++) {
-                int thisAnswerId = baseAnswerId + j;
-                String thisUid = UUID.randomUUID().toString();
-                Answer ans = new Answer(thisUid, thisAnswerId, qId, answerTexts.get(j),0);
-                newAnswers.add(ans);
-                if (j + 1 == correctIndex) {
-                    correctAnswerId = thisAnswerId;
-                }
+                answerUids.add(UUID.randomUUID().toString());
             }
 
-            Question q = new Question(qId, id, qtext, correctAnswerId);
-            newQuestions.add(q);
+            for (int j = 0; j < 4; j++) {
+                newAnswers.add(new Answer(
+                        answerUids.get(j),
+                        qId,
+                        answerTexts.get(j),
+                        0
+                ));
+            }
+
+            String correctAnswerUid = answerUids.get(correctIndex - 1);
+            newQuestions.add(new Question(qId, id, qtext, correctAnswerUid));
             qId += 2;
         }
 
