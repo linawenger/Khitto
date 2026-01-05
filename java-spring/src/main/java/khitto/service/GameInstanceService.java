@@ -5,10 +5,7 @@ import khitto.model.Game;
 import khitto.model.Question;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class GameInstanceService {
@@ -61,25 +58,23 @@ public class GameInstanceService {
                     newQuestionId,
                     instance.getId(),
                     oldQ.getContent(),
-                    oldQ.getCorrectAnswerId()
+                    oldQ.getCorrectAnswerUid()
             );
             newQuestions.add(newQ);
 
             List<Answer> oldAnswers = answerRepo.findByQuestionId(oldQ.getId());
             for (Answer oldA : oldAnswers) {
-                int newAnswerId = answerRepo.getNextId();
                 String newUid = UUID.randomUUID().toString();
                 Answer newA = new Answer(
                         newUid,
-                        newAnswerId,
                         newQuestionId,
                         oldA.getContent(),
                         0
                 );
                 newAnswers.add(newA);
 
-                if (oldA.getId() == oldQ.getCorrectAnswerId()) {
-                    newQ.setCorrectAnswerId(newAnswerId);
+                if (Objects.equals(oldA.getUid(), oldQ.getCorrectAnswerUid())) {
+                    newQ.setCorrectAnswerUid(newUid);
                 }
             }
         }

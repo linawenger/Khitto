@@ -51,7 +51,7 @@ public final class ItemToModel {
         int id         = getInt(value, "id");
         String gameId  = getString(value, "gameId");
         String text    = getString(value, "content");
-        int correct    = getInt(value, "correctAnswerId");
+        String correct = getString(value, "correctAnswerUid");
 
         return new Question(id, gameId, text, correct);
     }
@@ -60,10 +60,9 @@ public final class ItemToModel {
         var value = item.getValue();
 
         String uid = getString(value, "uid");
-        int id         = getInt(value, "id");
         int questionId = getInt(value, "questionId");
         String text    = getString(value, "content");
         int count    = getInt(value, "count");
-        return new Answer(uid, id, questionId, text, count);
+        return new Answer(uid, questionId, text, count);
     }
 }

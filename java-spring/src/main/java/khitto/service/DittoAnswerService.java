@@ -2,16 +2,13 @@ package khitto.service;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import com.ditto.java.Ditto;
 import com.ditto.java.DittoError;
 import com.ditto.java.DittoQueryResult;
 import com.ditto.java.serialization.DittoCborSerializable;
-import jakarta.annotation.Nonnull;
 import org.springframework.stereotype.Component;
-import reactor.core.publisher.Flux;
 
 @Component
 public class DittoAnswerService {
@@ -51,11 +48,6 @@ public class DittoAnswerService {
         }
     }
 
-    public int getNextId() {
-        List<khitto.model.Answer> all = findAllInternal();
-        return all.stream().mapToInt(khitto.model.Answer::getId).max().orElse(0) + 1;
-    }
-
     public void saveAll(List<khitto.model.Answer> answers) {
         Ditto ditto = dittoService.getDitto();
 
@@ -67,7 +59,6 @@ public class DittoAnswerService {
                                                                                    .put("newAnswer",
                                                                                            DittoCborSerializable.Dictionary.buildDictionary()
                                                                                                                            .put("uid", a.getUid())
-                                                                                                                           .put("id", String.valueOf(a.getId()))
                                                                                                                            .put("questionId", String.valueOf(a.getQuestionId()))
                                                                                                                            .put("content", a.getContent())
                                                                                                                            .put("count", "0")
@@ -93,31 +84,12 @@ public class DittoAnswerService {
         closeQuietly(result);
     }
 
-    private List<khitto.model.Answer> findAllInternal() {
-        Ditto ditto = dittoService.getDitto();
-        DittoQueryResult result = ditto.getStore()
-                                       .execute("SELECT * FROM %s".formatted(ANSWERS_COLLECTION_NAME))
-                                       .toCompletableFuture()
-                                       .join();
-
-        try {
-            return result.getItems().stream()
-                         .map(ItemToModel::answer)
-                         .collect(Collectors.toList());
-        } finally {
-            closeQuietly(result);
-        }
-    }
-
     private void closeQuietly(DittoQueryResult result) {
         if (result == null) return;
         try {result.close();}
         catch (IOException ignored) {}
     }
 
-    //------------------------------------------------------- count handling
-
-    // extracts count from DB for a spesific uid
     public String getCountByUid(String uid) {
         Ditto ditto = dittoService.getDitto();
 
@@ -141,7 +113,6 @@ public class DittoAnswerService {
         }
     }
 
-    //updates count attribute for a uid
     public void updateCountByUid(String uid, int newCount) {
         Ditto ditto = dittoService.getDitto();
 
@@ -160,7 +131,6 @@ public class DittoAnswerService {
         closeQuietly(result);
     }
 
-    //handles incrementing the count field of a given uid
     public void incrementCount(String uid) {
         String countOld = getCountByUid(uid);
         int count = Integer.parseInt(countOld);
