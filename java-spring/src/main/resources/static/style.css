@@ -126,13 +126,13 @@ body {
 }
 
 .answer-box.correct {
-    background: #87cefa;
-    border-color: #4169e1;
+    background: #90ee90;
+    border-color: #228b22;
 }
 
 .answer-box.wrong {
-    background: #f8d6d6;
-    border-color: #e49c9c;
+    background: #87cefa;
+    border-color: #4169e1;
 }
 
 .center-screen {

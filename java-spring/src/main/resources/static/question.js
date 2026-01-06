@@ -21,6 +21,7 @@ function selectAnswer(answerElement) {
         method: 'POST'
     });
 
+    //überflüssige logik
     const isCorrect = answerElement.dataset.correct === 'true';
 
     if (isCorrect) {
