@@ -1,6 +1,8 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+    const correctUid = document.getElementById('correctAnswer').dataset.correctUid;
+
     const answerElements = document.querySelectorAll('.answerData');
 
     const answers = Array.from(answerElements).map(element => ({
@@ -22,15 +24,20 @@ document.addEventListener('DOMContentLoaded', () => {
         answers.sort((a,b) => b.count - a.count || a.content.localeCompare(b.content)); //localCompare = alphabetical sorting
 
         answers.forEach(answer => {
-            render(answer.content, answer.count);
+            render(answer.content, answer.count, answer.uid === correctUid);
         })
     });
 });
 
-function render(content, count) {
+function render(content, count, isCorrect) {
     const ul = document.getElementById('resultList');
     const li = document.createElement('li');
     li.textContent = `${content}: ${count}`;
+
+    if (isCorrect) {
+        li.style.fontWeight = 'bold';
+    }
+
     ul.appendChild(li);
 }
 

@@ -142,8 +142,11 @@ public class GamePlayController extends BaseGameController {
         Question q = questions.get(index);
         List<Answer> answers = answerRepo.findByQuestionId(q.getId());
 
+        String correctUid = q.getCorrectAnswerUid();
+
         model.addAttribute("game", game);
         model.addAttribute("answers", answers);
+        model.addAttribute("correctAnswerUid", correctUid);
 
         return "result";
     }

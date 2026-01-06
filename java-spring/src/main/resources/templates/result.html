@@ -12,6 +12,8 @@
         ~{fragments/navigation-bar-elements :: game-next})}">
 </div>
 
+<div id="correctAnswer" th:data-correct-uid="${correctAnswerUid}"> </div>
+
 <ul id="answersData" style="display:none;">
   <li th:each="a : ${answers}"
       class="answerData"
