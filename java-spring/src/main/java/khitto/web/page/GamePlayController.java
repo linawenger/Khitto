@@ -121,34 +121,32 @@ public class GamePlayController extends BaseGameController {
     public String result(@PathVariable String id,
                          @PathVariable int status,
                          Model model) {
-
         Game game = gameRepo.findById(id).orElseThrow();
 
         if (!game.isFinished() || game.getStatus() == 0) {
             return redirectToHome();
         }
 
+        // Load all questions for this game instance (sorted by id)
         List<Question> questions = questionRepo.findByGameId(id)
-                                               .stream()
-                                               .sorted(Comparator.comparingInt(Question::getId))
-                                               .toList();
+                .stream()
+                .sorted(Comparator.comparingInt(Question::getId))
+                .toList();
 
+        // status is even: 2,4,6,...
         int index = status / 2 - 1;
 
         if (index < 0 || index >= questions.size()) {
+            // invalid status → just go back through generic play route
             return "redirect:/games/" + id;
         }
 
         Question q = questions.get(index);
         List<Answer> answers = answerRepo.findByQuestionId(q.getId());
 
-        String correctUid = q.getCorrectAnswerUid();
-
         model.addAttribute("game", game);
+        model.addAttribute("question", q);
         model.addAttribute("answers", answers);
-        model.addAttribute("correctAnswerUid", correctUid);
-
         return "result";
     }
-
 }
