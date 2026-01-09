@@ -39,6 +39,21 @@ public class GameStreamController {
                 );
     }
 
+    @GetMapping(path = "/games/{id}/stream",
+            produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public Flux<ServerSentEvent<Game>> streamSingleGame(
+            @org.springframework.web.bind.annotation.PathVariable("id") String id) {
+
+        return gameObservationService
+                .observeGame(id)
+                .map(game ->
+                        ServerSentEvent.<Game>builder()
+                                .event("game")
+                                .data(game)
+                                .build()
+                );
+    }
+
     private String renderGamesFragment(List<Game> games) {
         List<Game> templates = games.stream()
                                     .filter(g -> g.getStatus() == 0)
