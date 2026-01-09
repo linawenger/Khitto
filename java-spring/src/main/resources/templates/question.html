@@ -4,6 +4,8 @@
   <title>Question</title>
   <link rel="stylesheet" th:href="@{/style.css}" />
   <script defer th:src="@{/question.js}"></script>
+  <script defer th:src="@{/game-logic.js}"></script>
+
 </head>
 <body>
 
@@ -17,6 +19,11 @@
     visibility: hidden;
   }
 </style>
+
+<div id="gameMeta"
+     th:data-game-id="${game.id}"
+     th:data-game-status="${game.status}"
+     style="display:none;"></div>
 
 <div class="page">
   <h2 th:text="${question.content}">Question text…</h2>

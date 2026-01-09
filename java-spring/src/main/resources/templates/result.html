@@ -3,6 +3,8 @@
 <head>
   <title>Result</title>
   <link rel="stylesheet" th:href="@{/style.css}" />
+  <script defer th:src="@{/game-logic.js}"></script>
+
 </head>
 <body>
 
@@ -11,6 +13,11 @@
         'Result',
         ~{fragments/navigation-bar-elements :: game-next})}">
 </div>
+
+<div id="gameMeta"
+     th:data-game-id="${game.id}"
+     th:data-game-status="${game.status}"
+     style="display:none;"></div>
 
 <div id="correctAnswer" th:data-correct-uid="${correctAnswerUid}"> </div>
 
