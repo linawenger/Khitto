@@ -151,3 +151,7 @@ body {
     max-width: 500px;
     width: min(90%, 500px);
 }
+.input.error {
+    border-color: #d9534f;
+    background: #fbeaea;
+}
