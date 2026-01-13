@@ -68,8 +68,15 @@ dependencies {
     runtimeOnly("com.h2database:h2")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-    
+
     // Selenium WebDriver for visual browser testing
     testImplementation("org.seleniumhq.selenium:selenium-java:4.11.0")
     testImplementation("io.github.bonigarcia:webdrivermanager:5.9.2")
+}
+
+tasks.register<Delete>("cleanDittoDir") {
+    delete("${projectDir}/build/ditto-spring-dir")
+}
+tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
+    dependsOn("cleanDittoDir")
 }

@@ -2,6 +2,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const questionList = document.getElementById("questionList");
     const addBtn = document.getElementById("addQuestionButton");
     const template = document.getElementById("questionTemplate");
+    const form = document.getElementById("makerForm");
+    const publishBtn = document.getElementById("publishBtn");
 
     if (!questionList || !template) {
         return;
@@ -64,5 +66,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const existing = window.existingQuestions || [];
     if (existing.length > 0) {
         existing.forEach(addQuestionFromData);
+    }
+
+    if (publishBtn) {
+        publishBtn.addEventListener("click", () => {
+            if (validateMakerForm()) {
+                form.submit();
+            }
+        });
     }
 });
