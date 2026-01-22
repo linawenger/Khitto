@@ -17,13 +17,29 @@ document.addEventListener("DOMContentLoaded", function () {
             const game = JSON.parse(evt.data);
             const newStatus = game.status;
 
-            if (typeof newStatus !== "number") return;
+            if (typeof newStatus !== "number" || newStatus === currentStatus) return;
 
-            if (newStatus !== currentStatus) {
+// Allow only ONE step forward per page load.
+            const expected = currentStatus + 1;
+
+            if (newStatus === expected) {
                 currentStatus = newStatus;
-
-                window.location.href = `/games/${encodeURIComponent(gameId)}`;
+                window.location.href = "/games/" + encodeURIComponent(gameId);
+                return;
             }
+
+            if (newStatus > expected) {
+                console.warn(`game-logic: status jump ${currentStatus} -> ${newStatus}; gating to one step`);
+                currentStatus = expected;
+                window.location.href = "/games/" + encodeURIComponent(gameId);
+                return;
+            }
+            if (newStatus < currentStatus) {
+                console.warn(`game-logic: status went backwards ${currentStatus} -> ${newStatus}; resyncing`);
+                currentStatus = newStatus;
+                window.location.href = "/games/" + encodeURIComponent(gameId);
+            }
+
         } catch (e) {
             console.error("game-logic: failed to parse SSE payload", e);
         }

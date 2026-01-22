@@ -46,9 +46,11 @@ public class GameObservationService {
 
         return observationService
                 .observeList(query, query, ItemToModel::game)
-                .map(list -> list.stream().findFirst().orElse(null))
-                .filter(java.util.Objects::nonNull)
-                // only emit when status changes (question -> result -> next question...)
+                .map(list -> list.stream().findFirst())
+                .filter(java.util.Optional::isPresent)
+                .map(java.util.Optional::get)
                 .distinctUntilChanged(Game::getStatus);
     }
+
+
 }

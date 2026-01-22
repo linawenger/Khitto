@@ -11,17 +11,22 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 import reactor.core.publisher.Flux;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 public class GameStreamController {
+
+    private final ObjectMapper objectMapper;
 
     private final GameObservationService gameObservationService;
     private final SpringTemplateEngine templateEngine;
 
     public GameStreamController(GameObservationService gameObservationService,
-                                SpringTemplateEngine templateEngine) {
+                                SpringTemplateEngine templateEngine,
+                                ObjectMapper objectMapper) {
         this.gameObservationService = gameObservationService;
         this.templateEngine = templateEngine;
+        this.objectMapper = objectMapper;
     }
 
     @GetMapping(path = "/games/stream",
@@ -41,16 +46,24 @@ public class GameStreamController {
 
     @GetMapping(path = "/games/{id}/stream",
             produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-    public Flux<ServerSentEvent<Game>> streamSingleGame(
+    public Flux<ServerSentEvent<String>> streamSingleGame(
             @org.springframework.web.bind.annotation.PathVariable("id") String id) {
 
         return gameObservationService
                 .observeGame(id)
-                .map(game ->
-                        ServerSentEvent.<Game>builder()
-                                .event("game")
-                                .data(game)
-                                .build()
+                .map(game -> {
+                    try {
+                        return objectMapper.writeValueAsString(game);
+                    } catch (Exception e) {
+                        // If serialization fails, fail this stream (you'll see it in logs)
+                        throw new RuntimeException("Failed to serialize game to JSON", e);
+                    }
+                })
+                .map(json ->
+                        ServerSentEvent.<String>builder()
+                                       .event("game")
+                                       .data(json)
+                                       .build()
                 );
     }
 
