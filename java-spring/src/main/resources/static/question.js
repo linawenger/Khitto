@@ -46,3 +46,26 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 1000); // 1 Sekunden noch ANPASSEN
     }
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+    const submissionElement = document.getElementById("submittedCount")
+    if(!submissionElement) return;
+
+    const uids = Array.from(document.querySelector('#answers .answer-box'))
+        .map(el => el.dataset.uid)
+        .filter(Boolean);
+
+    async function refreshSubmissions(){
+        try{
+            const response = await fetch("/answers/submissions", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(uids)
+            });
+            const data = await response.json();
+            submissionElement.textContent = String(data.total ?? 0);
+        } catch (e) {
+        }
+    }
+    setInterval(refreshSubmissions, 1000);
+})

@@ -22,5 +22,16 @@
     </form>
 </th:block>
 
+<th:block th:fragment="question-right">
+    <div class="navigation-right-stack">
+        <div class="submissions">
+            Answers submitted: <span id="submittedCount">0</span>
+        </div>
+        <form th:action="@{/games/{id}/next(id=${game.id})}" method="post">
+            <button class="button" type="submit">Next</button>
+        </form>
+    </div>
+</th:block>
+
 </body>
 </html>
