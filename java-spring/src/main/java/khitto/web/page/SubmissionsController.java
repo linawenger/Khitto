@@ -7,14 +7,11 @@ import org.springframework.stereotype.Controller;
 import java.util.List;
 import java.util.Map;
 
-@Controller
+@RestController
 public class SubmissionsController {
-    @RestController
-    public class Submissions {
-
         private final DittoAnswerService dittoAnswerService;
 
-        public Submissions(DittoAnswerService dittoAnswerService) {
+        public SubmissionsController(DittoAnswerService dittoAnswerService) {
             this.dittoAnswerService = dittoAnswerService;
         }
 
@@ -39,4 +36,3 @@ public class SubmissionsController {
         }
     }
 
-}

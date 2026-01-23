@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const submissionElement = document.getElementById("submittedCount")
     if(!submissionElement) return;
 
-    const uids = Array.from(document.querySelector('#answers .answer-box'))
+    const uids = Array.from(document.querySelectorAll('#answers .answer-box'))
         .map(el => el.dataset.uid)
         .filter(Boolean);
 
