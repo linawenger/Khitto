@@ -19,7 +19,7 @@ public class AnswerCountController {
     @PostMapping("/answers/{uid}/count")
     @ResponseBody
     public void incrementCount(@PathVariable String uid) {
-        answerService.incrementCount(uid);
+        answerService.incrementCountWithRetry(uid);
     }
 }
 

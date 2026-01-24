@@ -113,30 +113,53 @@ public class DittoAnswerService {
         }
     }
 
-    public void updateCountByUid(String uid, int newCount) {
+    private void updateCount(String uid, String oldCount, String newCount) {
+        //only updates if count unchanged
         Ditto ditto = dittoService.getDitto();
 
         DittoQueryResult result = ditto.getStore()
                                        .execute(
-                                               "UPDATE %s SET count = :count WHERE uid = :uid"
+                                               "UPDATE %s SET count = :newCount WHERE uid = :uid AND count = :oldCount"
                                                        .formatted(ANSWERS_COLLECTION_NAME),
                                                DittoCborSerializable.Dictionary.buildDictionary()
                                                                                .put("uid", uid)
-                                                                               .put("count", String.valueOf(newCount))
+                                                                               .put("oldCount", oldCount)
+                                                                               .put("newCount", newCount)
                                                                                .build()
                                        )
                                        .toCompletableFuture()
                                        .join();
-
         closeQuietly(result);
     }
 
-    public void incrementCount(String uid) {
-        String countOld = getCountByUid(uid);
-        int count = Integer.parseInt(countOld);
-        count++;
-        updateCountByUid(uid, count);
+    public void incrementCountWithRetry(String uid) {
+        final int maxRetries = 20;
+
+        for (int attempt = 1; attempt <= maxRetries; attempt++) {
+            String oldString = getCountByUid(uid);
+            int oldInteger;
+            try {
+                oldInteger = Integer.parseInt(oldString);
+            } catch (NumberFormatException e) {
+                throw new IllegalStateException("Error reading count from db:" +e);
+            }
+
+            int newCount = oldInteger + 1;
+            String newString = String.valueOf(newCount);
+            updateCount(uid, oldString, newString);
+            if (newString.equals(getCountByUid(uid))) return;
+
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                return;
+            }
+        }
+
+        throw new RuntimeException("increment count failed after max retries");
     }
 
-    //TODO: handle race condition
+
+
 }
