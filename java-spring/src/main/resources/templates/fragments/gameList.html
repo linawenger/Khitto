@@ -11,31 +11,32 @@
              th:class="'game-card' + (${game.finished} ? '' : ' game-card-editing')"
              style="display:flex; flex-direction:column; gap:8px;">
 
-            <div style="flex:1; display:flex; align-items:center; justify-content:center;">
+            <div style="flex:1; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:bold;">
                 <span th:text="${game.name}">Game</span>
             </div>
 
             <div class="game-card-actions"
-                 th:if="${game.finished}"
-                 style="display:flex; gap:6px;">
+                 th:if="${game.finished}">
 
                 <a th:href="'/games/' + ${game.id}"
-                   class="button"> Play
-                </a>
+                   class="button">Play</a>
+
+                <a th:href="'/games/' + ${game.id} + '/export'"
+                   class="button">Export</a>
 
                 <a th:href="'/maker/' + ${game.id}"
-                   class="button"> Modify
-                </a>
+                   class="button">Modify</a>
 
                 <form th:action="'/games/' + ${game.id} + '/delete'" method="post">
                     <button type="submit"
-                            class="button button-delete"> Delete
+                            class="button button-delete">
+                        Delete
                     </button>
                 </form>
             </div>
 
             <div th:if="${!game.finished}"
-                 style="font-size:0.8rem"> currently being edited…
+                 style="font-size:0.8rem; font-weight:bold"> currently being edited…
             </div>
         </div>
 
@@ -43,11 +44,11 @@
              style="display:flex; flex-direction:column; gap:8px;">
 
             <div style="flex:1; display:flex; align-items:center; justify-content:center;">
-                <span style="font-weight:bold;">Create new game</span>
+                <span style="font-weight:bold;">Create game</span>
             </div>
 
             <div class="game-card-actions"
-                 style="display:flex; gap:6px;">
+                 style="display:flex; gap:6px; font-size:0.8rem">
 
                 <form th:action="'/games/new'" method="post">
                     <button type="submit"
@@ -75,14 +76,14 @@
 
         <div th:each="game : ${activeGames}"
              class="game-card"
-             style="display:flex; flex-direction:column; gap:8px;">
+             style="display:flex; flex-direction:column; gap:8px; font-weight:bold">
 
             <div style="flex:1; display:flex; align-items:center; justify-content:center;">
                 <span th:text="${game.name}">Game</span>
             </div>
 
             <div class="game-card-actions"
-                 style="display:flex; gap:6px;">
+                 style="display:flex; gap:6px;font-weight:normal;  ">
 
                 <a th:href="'/games/' + ${game.id}"
                    class="button">
