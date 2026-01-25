@@ -17,6 +17,15 @@ public class MakerController extends BaseGameController {
         super(gameRepo, questionRepo, answerRepo);
     }
 
+    @GetMapping("/maker/import")
+    public String importToMaker() {
+        String id = gameRepo.getUUID();
+        Game game = new Game(id, "", 0, false); // Template
+        gameRepo.save(game);
+
+        return "redirect:/maker/" + id;
+    }
+
     @GetMapping("/maker/{id}")
     public String maker(@PathVariable String id, Model model) {
         Game game = gameRepo.findById(id).orElseThrow();

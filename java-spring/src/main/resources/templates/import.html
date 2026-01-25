@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Import Game</title>
+  <link rel="stylesheet" th:href="@{/style.css}" />
+  <script defer src="/import.js"></script>
+</head>
+<body>
+
+<div th:replace="~{fragments/navigation-bar :: navigation-bar(
+        ~{fragments/navigation-bar-elements :: back-to-menu},
+        'Import page',
+        ~{fragments/navigation-bar-elements :: import-submit})}">
+</div>
+
+<div class="page center-screen">
+  <div class="box" style="text-align:left;">
+
+    <label for="importTitle">Game title</label>
+    <input id="importTitle"
+           class="input"
+           placeholder="Game title" />
+
+    <p style="margin-top:12px; font-size:0.85rem;">
+      JSON format (OpenTriviaDB) must contain per question:
+    </p>
+
+    <pre style="font-size:0.75rem; background:#f4f4f4; padding:8px;">
+    {
+      "type": "multiple",
+      "question": "...",
+      "correct_answer": "...",
+      "incorrect_answers": ["...", "...", "..."]
+    }
+    </pre>
+
+    <div id="dropZone"
+         style="margin-top:16px; padding:20px;
+                border:2px #000000;
+                text-align:center;
+                cursor:pointer;">
+      Drop JSON file here or click to select
+      <input type="file"
+             id="fileInput"
+             accept=".json"
+             hidden />
+    </div>
+
+  </div>
+</div>
+
+</body>
+</html>

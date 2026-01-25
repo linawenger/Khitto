@@ -12,14 +12,18 @@
     </form>
 </th:block>
 
-<th:block th:fragment="maker-publish">
-    <button class="button" type="button" id="publishBtn">Publish</button>
-</th:block>
-
 <th:block th:fragment="game-next">
     <form th:action="@{/games/{id}/next(id=${game.id})}" method="post">
-        <button class="button" type="submit">Next</button>
+        <button type="submit" class="button">Next</button>
     </form>
+</th:block>
+
+<th:block th:fragment="maker-publish">
+    <button type="button" class="button" id="publishBtn">Publish</button>
+</th:block>
+
+<th:block th:fragment="import-submit">
+    <button type="button" class="button" id="importBtn">Import</button>
 </th:block>
 
 <th:block th:fragment="question-right">

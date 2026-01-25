@@ -47,13 +47,34 @@
             </div>
         </div>
 
-        <form th:action="'/games/new'"
-              method="post"
-              class="game-card">
-            <button type="submit" class="button" style="width:100%;">
-                + New Game
-            </button>
-        </form>
+        <div class="game-card"
+             style="display:flex; flex-direction:column; gap:6px;">
+
+            <div style="flex:1; display:flex; align-items:center; justify-content:center;">
+                <span style="font-weight:bold;">Create new game</span>
+            </div>
+
+            <div class="game-card-actions"
+                 style="display:flex; gap:6px; justify-content:space-between;">
+
+                <form th:action="'/games/new'"
+                      method="post"
+                      style="flex:1;">
+                    <button type="submit"
+                            class="button"
+                            style="width:100%;">
+                        New
+                    </button>
+                </form>
+
+                <a href="/games/import"
+                   class="button"
+                   style="flex:1; text-align:center;">
+                    Import
+                </a>
+            </div>
+        </div>
+
     </div>
 
     <h3 th:if="${#lists.size(activeGames) > 0}" style="margin-top:24px;">Active games</h3>
