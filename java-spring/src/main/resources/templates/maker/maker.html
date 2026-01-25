@@ -4,6 +4,7 @@
   <title>Khitto Maker</title>
   <link rel="stylesheet" th:href="@{/style.css}" />
   <script defer th:src="@{/makerValidation.js}"></script>
+  <script defer th:src="@{/makerImport.js}"></script>
   <script defer th:src="@{/maker.js}"></script>
 </head>
 <body>
@@ -36,25 +37,6 @@
   window.existingQuestions = /*[[${existingQuestions}]]*/ [];
 </script>
 
-<script>
-  const imported = sessionStorage.getItem("importGame");
-
-  if (imported) {
-    const data = JSON.parse(imported);
-
-    const nameInput = document.getElementById("gameName");
-    if (!nameInput.value.trim()) {
-      nameInput.value = data.title;
-    }
-
-    window.existingQuestions = [
-      ...(window.existingQuestions || []),
-      ...data.questions
-    ];
-
-    sessionStorage.removeItem("importGame");
-  }
-</script>
 
 </body>
 </html>

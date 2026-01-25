@@ -20,7 +20,7 @@ public class MakerController extends BaseGameController {
     @GetMapping("/maker/import")
     public String importToMaker() {
         String id = gameRepo.getUUID();
-        Game game = new Game(id, "", 0, false); // Template
+        Game game = new Game(id, "", 0, false);
         gameRepo.save(game);
 
         return "redirect:/maker/" + id;
