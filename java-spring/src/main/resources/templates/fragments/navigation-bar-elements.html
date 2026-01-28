@@ -22,14 +22,12 @@
     </form>
 </th:block>
 
-<th:block th:fragment="question-right">
+<th:block th:fragment="question-left">
     <div class="navigation-right-stack">
+        <a th:href="@{/}" class="button">Back to menu</a>
         <div class="submissions">
             Answers submitted: <span id="submittedCount">0</span>
         </div>
-        <form th:action="@{/games/{id}/next(id=${game.id})}" method="post">
-            <button class="button" type="submit">Next</button>
-        </form>
     </div>
 </th:block>
 
