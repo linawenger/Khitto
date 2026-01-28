@@ -147,6 +147,8 @@ public class GamePlayController extends BaseGameController {
         model.addAttribute("game", game);
         model.addAttribute("question", q);
         model.addAttribute("answers", answers);
+
+        model.addAttribute("correctAnswerUid", q.getCorrectAnswerUid());
         return "result";
     }
 }

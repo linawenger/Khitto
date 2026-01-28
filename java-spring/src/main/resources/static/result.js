@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
         answers.sort((a,b) => b.count - a.count || a.content.localeCompare(b.content)); //localCompare = alphabetical sorting
 
         answers.forEach(answer => {
-            render(answer.content, answer.count, answer.uid === correctUid);
+            render(answer.content, answer.count, String(answer.uid) === String(correctUid));
         })
     });
 });
