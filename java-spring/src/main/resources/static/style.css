@@ -129,12 +129,18 @@ body {
 }
 
 .input {
+    display: block;
     width: 100%;
     padding: 8px 10px;
     border-radius: 10px;
     border: 1px solid #bfbfbf;
     background: #f9f9f9;
     color: #333;
+}
+
+.input-question {
+    resize: vertical;
+    width: 100%;
 }
 
 .question-block {
@@ -163,6 +169,37 @@ body {
 .answer-box.wrong {
     background: #87cefa;
     border-color: #4169e1;
+}
+
+.answers-title {
+    margin-top: 8px;
+    font-size: 0.9rem;
+}
+
+.answers-list {
+    display: grid;
+    gap: 6px;
+    margin-top: 6px;
+}
+
+.answer-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.answer-input {
+    flex: 1;
+    min-width: 0;
+    width: auto;
+}
+
+.correct-label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
+    font-size: 0.85rem;
 }
 
 .center-screen {
@@ -251,4 +288,8 @@ body {
     background: rgba(34, 139, 34, 0.55);
     border-right-color: rgba(34, 139, 34, 0.75);
     font-weight: 600;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
 }

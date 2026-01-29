@@ -17,7 +17,7 @@
 
 <div class="page">
   <form id="makerForm" th:action="@{/maker/{id}/publish(id=${game.id})}" method="post">
-    <div class="box" style="text-align:left;">
+    <div class="box" style="text-align:left; margin: 0 auto;">
       <label for="gameName">Game name</label>
       <input id="gameName" class="input" name="name" th:value="${game.name}" />
     </div>

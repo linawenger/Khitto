@@ -8,23 +8,38 @@
         <label class="question-label">Question</label>
         <input class="input" name="q[]" placeholder="Question text" />
 
-        <div style="margin-top:8px;">Answers (one is correct):</div>
-        <div style="display:grid; gap:6px; margin-top:6px;">
-            <div>
-                <input class="input" name="a1[]" placeholder="Answer 1" />
-                <label><input type="radio" name="correct" value="1" checked /> correct</label>
+        <div class="answers-list">
+
+            <div class="answer-row">
+                <input class="input answer-input" name="a1[]" placeholder="Answer 1" />
+                <label class="correct-label">
+                    <input type="radio" name="correct" value="1" checked />
+                    correct
+                </label>
             </div>
-            <div>
-                <input class="input" name="a2[]" placeholder="Answer 2" />
-                <label><input type="radio" name="correct" value="2" /> correct</label>
+
+            <div class="answer-row">
+                <input class="input answer-input" name="a2[]" placeholder="Answer 2" />
+                <label class="correct-label">
+                    <input type="radio" name="correct" value="2" />
+                    correct
+                </label>
             </div>
-            <div>
-                <input class="input" name="a3[]" placeholder="Answer 3" />
-                <label><input type="radio" name="correct" value="3" /> correct</label>
+
+            <div class="answer-row">
+                <input class="input answer-input" name="a3[]" placeholder="Answer 3" />
+                <label class="correct-label">
+                    <input type="radio" name="correct" value="3" />
+                    correct
+                </label>
             </div>
-            <div>
-                <input class="input" name="a4[]" placeholder="Answer 4" />
-                <label><input type="radio" name="correct" value="4" /> correct</label>
+
+            <div class="answer-row">
+                <input class="input answer-input" name="a4[]" placeholder="Answer 4" />
+                <label class="correct-label">
+                    <input type="radio" name="correct" value="4" />
+                    correct
+                </label>
             </div>
         </div>
 
