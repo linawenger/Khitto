@@ -11,10 +11,4 @@ For more information, see - [Java Install Guide](https://docs.ditto.live/sdk/lat
 3. Synchronize your project with the Gradle file by clicking Build > Sync Project with Gradle Files.
 4. Open a terminal and run the following command to launch the app:
    - `./gradlew bootRun`
-5. Open http://localhost:8080 in a browser to interact with the app.
-
-## Additional Resources
-
-- [Java Roadmap and Support Policy](https://docs.ditto.live/sdk/latest/install-guides/java/roadmap)
-- [API Reference](https://software.ditto.live/java/ditto-java/4.11.0-preview.1/api-reference/)
-
+5. Open http://localhost:9824 in a browser to interact with the app.
