@@ -95,12 +95,21 @@ body {
 .game-card-actions {
     display: flex;
     gap: 6px;
-    margin-top: 8px;
+    width: 100%;
+}
+
+.game-card-actions > a,
+.game-card-actions > form {
+    flex: 1;
 }
 
 .game-card-actions .button {
-    flex: 1;
+    width: 100%;
+    padding: 8px 0;      /* horizontal NICHT aufblasen */
     text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .import-example {
