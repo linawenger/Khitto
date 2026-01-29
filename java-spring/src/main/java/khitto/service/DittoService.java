@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-import quickstart.configuration.DittoConfigurationKeys;
+import khitto.configuration.DittoConfigurationKeys;
 import reactor.core.publisher.Sinks;
 
 @Component
