@@ -38,6 +38,11 @@ public class MenuController extends BaseGameController {
         return "menu";
     }
 
+    @GetMapping("/games/import")
+    public String importPage() {
+        return "import";
+    }
+
     @PostMapping("/games/new")
     public String newGame() {
         String id = gameRepo.getUUID();

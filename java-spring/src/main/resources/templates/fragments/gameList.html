@@ -5,75 +5,91 @@
 <div id="game_list"
      th:fragment="gameList (templates, activeGames)">
 
-    <h3>Templates</h3>
+    <h3>Games</h3>
     <div class="grid-games">
         <div th:each="game : ${templates}"
              th:class="'game-card' + (${game.finished} ? '' : ' game-card-editing')"
-             style="display:flex; flex-direction:column; gap:6px;">
+             style="display:flex; flex-direction:column; gap:8px;">
 
-            <a th:if="${game.finished}"
-               th:href="'/games/' + ${game.id}"
-               class="game-card-link"
-               style="flex:1; display:flex; align-items:center; justify-content:center;">
+            <div style="flex:1; display:flex; align-items:center; justify-content:center; font-size:0.8rem; font-weight:bold;">
                 <span th:text="${game.name}">Game</span>
-            </a>
-
-            <div th:if="${!game.finished}"
-                 style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-                <span th:text="${game.name}"
-                      style="font-weight:bold;">Game</span>
-                <span style="font-size:0.8rem;">currently being edited…</span>
             </div>
 
             <div class="game-card-actions"
-                 th:if="${game.finished}"
-                 style="display:flex; gap:6px; justify-content:space-between;">
+                 th:if="${game.finished}">
+
+                <a th:href="'/games/' + ${game.id}"
+                   class="button">Play</a>
+
+                <a th:href="'/games/' + ${game.id} + '/export'"
+                   class="button">Export</a>
 
                 <a th:href="'/maker/' + ${game.id}"
-                   class="button"
-                   style="flex:1; text-align:center;">
-                    Modify
-                </a>
+                   class="button">Modify</a>
 
-                <form th:action="'/games/' + ${game.id} + '/delete'"
-                      method="post"
-                      style="flex:1;">
+                <form th:action="'/games/' + ${game.id} + '/delete'" method="post">
                     <button type="submit"
-                            class="button button-delete"
-                            style="width:100%;">
+                            class="button button-delete">
                         Delete
                     </button>
                 </form>
             </div>
+
+            <div th:if="${!game.finished}"
+                 style="font-size:0.8rem; font-weight:bold"> currently being edited…
+            </div>
         </div>
 
-        <form th:action="'/games/new'"
-              method="post"
-              class="game-card">
-            <button type="submit" class="button" style="width:100%;">
-                + New Game
-            </button>
-        </form>
-    </div>
+        <div class="game-card"
+             style="display:flex; flex-direction:column; gap:8px;">
 
-    <h3 th:if="${#lists.size(activeGames) > 0}" style="margin-top:24px;">Active games</h3>
-    <div class="grid-games" th:if="${#lists.size(activeGames) > 0}">
-        <div th:each="game : ${activeGames}"
-             class="game-card"
-             style="display:flex; flex-direction:column; gap:6px;">
-
-            <a th:href="'/games/' + ${game.id}"
-               class="game-card-link"
-               style="flex:1; display:flex; align-items:center; justify-content:center;">
-                <span th:text="${game.name}">Game</span>
-            </a>
+            <div style="flex:1; display:flex; align-items:center; justify-content:center;">
+                <span style="font-weight:bold;">Create game</span>
+            </div>
 
             <div class="game-card-actions"
-                 style="display:flex; gap:6px; justify-content:flex-end;">
-                <form th:action="'/games/' + ${game.id} + '/delete'"
-                      method="post"
-                      style="flex:1;">
+                 style="display:flex; gap:6px; font-size:0.8rem">
+
+                <form th:action="'/games/new'" method="post">
+                    <button type="submit"
+                            class="button">
+                        New
+                    </button>
                 </form>
+
+                <a href="/games/import"
+                   class="button">
+                    Import
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <h3 th:if="${#lists.size(activeGames) > 0}"
+        style="margin-top:24px;">
+        Running games
+    </h3>
+
+    <div class="grid-games"
+         th:if="${#lists.size(activeGames) > 0}">
+
+        <div th:each="game : ${activeGames}"
+             class="game-card"
+             style="display:flex; flex-direction:column; gap:8px; font-weight:bold">
+
+            <div style="flex:1; display:flex; align-items:center; justify-content:center;">
+                <span th:text="${game.name}">Game</span>
+            </div>
+
+            <div class="game-card-actions"
+                 style="display:flex; gap:6px;font-weight:normal;  ">
+
+                <a th:href="'/games/' + ${game.id}"
+                   class="button">
+                    Play
+                </a>
+
             </div>
         </div>
     </div>
