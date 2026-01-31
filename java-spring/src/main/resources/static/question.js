@@ -43,7 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (nextButton) {
         setTimeout(() => {
             nextButton.style.visibility = "visible";
-        }, 1000); // 1 Sekunden noch ANPASSEN
+        }, 3000); // 1 Sekunden noch ANPASSEN
     }
 });
 
