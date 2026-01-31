@@ -1,22 +1,32 @@
 # Khitto
 
-Khitto is a web-based quiz game platform inspired by Kahoot using Ditto.
-It allows users to create, edit, import, export and play quiz games through a browser interface.
+Khitto is a decentralized, web-based quiz application built on the Ditto peer-to-peer framework. It does not rely on a central server and can operate without a permanent internet connection.
+
+The application is designed for collaborative learning. All participants have equal permissions to create, modify, and start quiz games.
 
 ---
 
-## Game Idea
+## Features
 
-The application follows a hierarchical structure:
+The system uses the Ditto peer-to-peer framework for synchronization, enabling reliable data exchange even in offline-first scenarios. Its frontend is a web-based user interface, making the application easily accessible across platforms. All data is stored and exchanged in JSON format, while the overall architecture is fully decentralized to avoid central dependencies and support resilient, distributed operation.
 
-- A **Game** consists of multiple **Questions**
-- A **Question** consists of multiple **Answers**
-- Each question has exactly **one correct answer**
+---
 
-## Game Flow
+## Game Model
 
-1. Create or edit a game in the Maker
-2. Publish the game to make it playable
-3. Start the game from the menu
-4. Answer questions sequentially with immediate feedback
-5. Finish on the result screen
+- A game contains multiple questions
+- Each question contains multiple answers
+- Exactly one answer per question is defined as correct
+
+---
+
+## Gameplay
+
+1. Create or edit a quiz
+2. Publish the quiz
+3. Start a game session
+4. Answer questions sequentially
+5. Receive immediate feedback
+6. Display results after the final question
+
+All connected peers share the same game state while peer-to-peer connectivity is available.

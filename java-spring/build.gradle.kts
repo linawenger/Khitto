@@ -73,10 +73,10 @@ dependencies {
     testImplementation("org.seleniumhq.selenium:selenium-java:4.11.0")
     testImplementation("io.github.bonigarcia:webdrivermanager:5.9.2")
 }
-//TODO delete these two
-tasks.register<Delete>("cleanDittoDir") {
-    delete("${projectDir}/build/ditto-spring-dir")
-}
-tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
-    dependsOn("cleanDittoDir")
-}
+//TODO; if application doesnt want to start
+//tasks.register<Delete>("cleanDittoDir") {
+//    delete("${projectDir}/build/ditto-spring-dir")
+//}
+//tasks.named<org.springframework.boot.gradle.tasks.run.BootRun>("bootRun") {
+//    dependsOn("cleanDittoDir")
+//}
